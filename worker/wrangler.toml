@@ -24,7 +24,7 @@ SITE_URL = "https://kitchendeals.org"
 [[d1_databases]]
 binding = "DB"
 database_name = "kitchen-deals-db"
-database_id = "REPLACE_WITH_DATABASE_ID"
+database_id = "91af939f-7f48-4873-80a6-81268330a55d"
 
 # The Node scraper service (root of this repo) scrapes deals/products and
 # POSTs them to /api/ingest. No in-worker cron scraping needed.
