@@ -1,0 +1,125 @@
+{
+  "site": {
+    "name": "Kitchen Deals",
+    "domain": "kitchendeals.org",
+    "url": "https://kitchendeals.org"
+  },
+  "pillar": {
+    "key": "core",
+    "entityType": "Pillar",
+    "name": "Kitchen Deals",
+    "targetKeyword": "kitchen deals",
+    "slug": "kitchen-deals",
+    "keywordCount": 401,
+    "volume": 2510,
+    "description": "Find the best kitchen appliance deals, discounts, and promo codes from top retailers."
+  },
+  "seasonal": [
+    {
+      "key": "black-friday",
+      "entityType": "Seasonal",
+      "name": "Black Friday Kitchen Deals",
+      "targetKeyword": "black friday kitchen appliance deals",
+      "slug": "black-friday-kitchen-appliance-deals",
+      "keywordCount": 123,
+      "volume": 1830,
+      "description": "Shop the best Black Friday kitchen appliance deals from top retailers."
+    },
+    {
+      "key": "cyber-monday",
+      "entityType": "Seasonal",
+      "name": "Cyber Monday Kitchen Deals",
+      "targetKeyword": "cyber monday kitchen deals",
+      "slug": "cyber-monday-kitchen-deals",
+      "keywordCount": 24,
+      "volume": 560,
+      "description": "Score Cyber Monday kitchen appliance deals and online-exclusive discounts."
+    },
+    {
+      "key": "prime-day",
+      "entityType": "Seasonal",
+      "name": "Prime Day Kitchen Deals",
+      "targetKeyword": "prime day kitchen deals",
+      "slug": "prime-day-kitchen-deals",
+      "keywordCount": 33,
+      "volume": 460,
+      "description": "Amazon Prime Day kitchen deals — the best appliance discounts of the year."
+    },
+    {
+      "key": "memorial-day",
+      "entityType": "Seasonal",
+      "name": "Memorial Day Kitchen Deals",
+      "targetKeyword": "memorial day kitchen deals",
+      "slug": "memorial-day-kitchen-deals",
+      "keywordCount": 4,
+      "volume": 20,
+      "description": "Memorial Day kitchen appliance sales and holiday weekend deals."
+    },
+    {
+      "key": "labor-day",
+      "entityType": "Seasonal",
+      "name": "Labor Day Kitchen Deals",
+      "targetKeyword": "labor day kitchen deals",
+      "slug": "labor-day-kitchen-deals",
+      "keywordCount": 2,
+      "volume": 20,
+      "description": "Labor Day kitchen appliance deals and end-of-summer sales."
+    }
+  ],
+  "brands": [
+    { "key": "kitchenaid", "entityType": "Brand", "name": "KitchenAid", "targetKeyword": "kitchenaid deals", "slug": "kitchenaid-deals", "keywordCount": 62, "volume": 570, "description": "Find the latest KitchenAid deals on mixers, blenders, and kitchen appliances." },
+    { "key": "shark", "entityType": "Brand", "name": "Shark", "targetKeyword": "shark kitchen deals", "slug": "shark-kitchen-deals", "keywordCount": 2, "volume": 400, "description": "Shark kitchen appliance deals — vacuums, blenders, and more on sale." },
+    { "key": "bosch", "entityType": "Brand", "name": "Bosch", "targetKeyword": "bosch kitchen deals", "slug": "bosch-kitchen-deals", "keywordCount": 21, "volume": 160, "description": "Bosch kitchen appliance deals — dishwashers, ranges, and refrigerators." },
+    { "key": "ge-appliances", "entityType": "Brand", "name": "GE Appliances", "targetKeyword": "ge kitchen appliance deals", "slug": "ge-kitchen-appliance-deals", "keywordCount": 17, "volume": 160, "description": "GE kitchen appliance deals — refrigerators, ovens, and dishwashers on sale." },
+    { "key": "whirlpool", "entityType": "Brand", "name": "Whirlpool", "targetKeyword": "whirlpool kitchen deals", "slug": "whirlpool-kitchen-deals", "keywordCount": 22, "volume": 140, "description": "Whirlpool kitchen deals — washers, dryers, refrigerators, and more." },
+    { "key": "frigidaire", "entityType": "Brand", "name": "Frigidaire", "targetKeyword": "frigidaire kitchen deals", "slug": "frigidaire-kitchen-deals", "keywordCount": 13, "volume": 110, "description": "Frigidaire kitchen appliance deals — refrigerators, ranges, and dishwashers." },
+    { "key": "samsung", "entityType": "Brand", "name": "Samsung", "targetKeyword": "samsung kitchen deals", "slug": "samsung-kitchen-deals", "keywordCount": 15, "volume": 90, "description": "Samsung kitchen appliance deals — smart refrigerators, ranges, and more." },
+    { "key": "stonewall-kitchen", "entityType": "Brand", "name": "Stonewall Kitchen", "targetKeyword": "stonewall kitchen deals", "slug": "stonewall-kitchen-deals", "keywordCount": 5, "volume": 70, "description": "Stonewall Kitchen gourmet food and kitchen product deals." },
+    { "key": "dacor", "entityType": "Brand", "name": "Dacor", "targetKeyword": "dacor kitchen deals", "slug": "dacor-kitchen-deals", "keywordCount": 2, "volume": 60, "description": "Dacor luxury kitchen appliance deals — ranges, refrigerators, and more." },
+    { "key": "lg", "entityType": "Brand", "name": "LG", "targetKeyword": "lg kitchen deals", "slug": "lg-kitchen-deals", "keywordCount": 18, "volume": 50, "description": "LG kitchen appliance deals — refrigerators, dishwashers, and ranges on sale." },
+    { "key": "cuisinart", "entityType": "Brand", "name": "Cuisinart", "targetKeyword": "cuisinart deals", "slug": "cuisinart-deals", "keywordCount": 1, "volume": 20, "description": "Cuisinart kitchen appliance deals — food processors, blenders, and more." },
+    { "key": "pampered-chef", "entityType": "Brand", "name": "Pampered Chef", "targetKeyword": "pampered chef deals", "slug": "pampered-chef-deals", "keywordCount": 2, "volume": 20, "description": "Pampered Chef kitchen tool deals and bundles." },
+    { "key": "ninja", "entityType": "Brand", "name": "Ninja", "targetKeyword": "ninja kitchen deals", "slug": "ninja-kitchen-deals", "keywordCount": 10, "volume": 0, "description": "Ninja kitchen appliance deals — blenders, air fryers, and cookers on sale." },
+    { "key": "wolf", "entityType": "Brand", "name": "Wolf", "targetKeyword": "wolf kitchen appliance deals", "slug": "wolf-kitchen-appliance-deals", "keywordCount": 3, "volume": 10, "description": "Wolf luxury kitchen appliance deals — ranges, ovens, and cooktops." },
+    { "key": "viking", "entityType": "Brand", "name": "Viking", "targetKeyword": "viking kitchen appliance deals", "slug": "viking-kitchen-appliance-deals", "keywordCount": 1, "volume": 10, "description": "Viking kitchen appliance deals — professional ranges and refrigerators." },
+    { "key": "wusthof", "entityType": "Brand", "name": "Wusthof", "targetKeyword": "wusthof knife deals", "slug": "wusthof-knife-deals", "keywordCount": 1, "volume": 10, "description": "Wusthof knife deals — premium German kitchen knives on sale." },
+    { "key": "zwilling", "entityType": "Brand", "name": "Zwilling", "targetKeyword": "zwilling knife deals", "slug": "zwilling-knife-deals", "keywordCount": 1, "volume": 0, "description": "Zwilling knife and cookware deals from the German brand." }
+  ],
+  "retailers": [
+    { "key": "amazon", "entityType": "Retailer", "name": "Amazon", "targetKeyword": "amazon kitchen deals", "slug": "amazon-kitchen-deals", "keywordCount": 69, "volume": 700, "description": "Amazon kitchen appliance deals — the best discounts from the world's largest retailer." },
+    { "key": "aldi", "entityType": "Retailer", "name": "Aldi", "targetKeyword": "aldi kitchen deals", "slug": "aldi-kitchen-deals", "keywordCount": 4, "volume": 210, "description": "Aldi kitchen deals — budget-friendly appliances and kitchen tools." },
+    { "key": "dollar-tree", "entityType": "Retailer", "name": "Dollar Tree", "targetKeyword": "dollar tree kitchen deals", "slug": "dollar-tree-kitchen-deals", "keywordCount": 1, "volume": 200, "description": "Dollar Tree kitchen deals — affordable kitchen essentials and gadgets." },
+    { "key": "walmart", "entityType": "Retailer", "name": "Walmart", "targetKeyword": "walmart kitchen deals", "slug": "walmart-kitchen-deals", "keywordCount": 7, "volume": 10, "description": "Walmart kitchen appliance deals — rollback prices on top brands." },
+    { "key": "target", "entityType": "Retailer", "name": "Target", "targetKeyword": "target kitchen deals", "slug": "target-kitchen-deals", "keywordCount": 4, "volume": 10, "description": "Target kitchen deals — stylish appliances and kitchen accessories on sale." },
+    { "key": "ikea", "entityType": "Retailer", "name": "IKEA", "targetKeyword": "ikea kitchen deals", "slug": "ikea-kitchen-deals", "keywordCount": 5, "volume": 10, "description": "IKEA kitchen deals — affordable kitchen furniture, storage, and cookware." },
+    { "key": "home-depot", "entityType": "Retailer", "name": "Home Depot", "targetKeyword": "home depot kitchen appliance deals", "slug": "home-depot-kitchen-appliance-deals", "keywordCount": 6, "volume": 0, "description": "Home Depot kitchen appliance deals — major appliance savings." },
+    { "key": "best-buy", "entityType": "Retailer", "name": "Best Buy", "targetKeyword": "best buy kitchen deals", "slug": "best-buy-kitchen-deals", "keywordCount": 5, "volume": 0, "description": "Best Buy kitchen appliance deals — electronics and appliance savings." },
+    { "key": "lowes", "entityType": "Retailer", "name": "Lowe's", "targetKeyword": "lowe's kitchen deals", "slug": "lowes-kitchen-deals", "keywordCount": 7, "volume": 0, "description": "Lowe's kitchen appliance deals — home improvement and appliance sales." },
+    { "key": "costco", "entityType": "Retailer", "name": "Costco", "targetKeyword": "costco kitchen deals", "slug": "costco-kitchen-deals", "keywordCount": 6, "volume": 0, "description": "Costco kitchen deals — bulk savings on kitchen appliances and tools." },
+    { "key": "macys", "entityType": "Retailer", "name": "Macy's", "targetKeyword": "macy's kitchen deals", "slug": "macys-kitchen-deals", "keywordCount": 3, "volume": 0, "description": "Macy's kitchen deals — premium appliances and kitchenware on sale." },
+    { "key": "nordstrom", "entityType": "Retailer", "name": "Nordstrom", "targetKeyword": "nordstrom kitchen deals", "slug": "nordstrom-kitchen-deals", "keywordCount": 3, "volume": 20, "description": "Nordstrom kitchen deals — curated kitchen products and cookware." },
+    { "key": "wayfair", "entityType": "Retailer", "name": "Wayfair", "targetKeyword": "wayfair kitchen deals", "slug": "wayfair-kitchen-deals", "keywordCount": 1, "volume": 0, "description": "Wayfair kitchen deals — furniture, appliances, and kitchen decor on sale." }
+  ],
+  "categories": [
+    { "key": "appliance-packages", "entityType": "Category", "name": "Kitchen Appliance Packages", "targetKeyword": "kitchen appliance package deals", "slug": "kitchen-appliance-package-deals", "keywordCount": 92, "volume": 990, "description": "Kitchen appliance package deals — save on bundles of refrigerators, ranges, and dishwashers." },
+    { "key": "knives", "entityType": "Category", "name": "Knives", "targetKeyword": "kitchen knife deals", "slug": "kitchen-knife-deals", "keywordCount": 39, "volume": 280, "description": "Kitchen knife deals — chef knives, knife sets, and cutting tools on sale." },
+    { "key": "cookware", "entityType": "Category", "name": "Cookware", "targetKeyword": "kitchen cookware deals", "slug": "kitchen-cookware-deals", "keywordCount": 5, "volume": 20, "description": "Kitchen cookware deals — pots, pans, and skillet sets on sale." },
+    { "key": "ovens-ranges", "entityType": "Category", "name": "Ovens & Ranges", "targetKeyword": "kitchen oven deals", "slug": "kitchen-oven-deals", "keywordCount": 6, "volume": 10, "description": "Kitchen oven and range deals — gas, electric, and convection ovens on sale." },
+    { "key": "blenders", "entityType": "Category", "name": "Blenders", "targetKeyword": "kitchen blender deals", "slug": "kitchen-blender-deals", "keywordCount": 2, "volume": 10, "description": "Kitchen blender deals — countertop and immersion blenders on sale." },
+    { "key": "grills-griddles", "entityType": "Category", "name": "Grills & Griddles", "targetKeyword": "kitchen grill deals", "slug": "kitchen-grill-deals", "keywordCount": 1, "volume": 10, "description": "Kitchen grill and griddle deals — indoor and outdoor cooking on sale." },
+    { "key": "mixers", "entityType": "Category", "name": "Mixers", "targetKeyword": "kitchen mixer deals", "slug": "kitchen-mixer-deals", "keywordCount": 3, "volume": 0, "description": "Kitchen mixer deals — stand mixers and hand mixers on sale." },
+    { "key": "microwaves", "entityType": "Category", "name": "Microwaves", "targetKeyword": "kitchen microwave deals", "slug": "kitchen-microwave-deals", "keywordCount": 1, "volume": 0, "description": "Kitchen microwave deals — countertop and over-the-range microwaves on sale." }
+  ],
+  "combined": [
+    { "key": "kitchenaid-mixers", "entityType": "Combined", "parentBrand": "kitchenaid", "parentCategory": "mixers", "name": "KitchenAid Mixer Deals", "targetKeyword": "kitchenaid mixer deals", "slug": "kitchenaid-mixer-deals", "volume": 0, "description": "KitchenAid mixer deals — stand mixers and hand mixers on sale from top retailers." },
+    { "key": "kitchenaid-amazon", "entityType": "Combined", "parentBrand": "kitchenaid", "parentRetailer": "amazon", "name": "KitchenAid Amazon Deals", "targetKeyword": "kitchenaid amazon deals", "slug": "kitchenaid-amazon-deals", "volume": 0, "description": "KitchenAid deals on Amazon — the latest discounts on KitchenAid appliances." },
+    { "key": "kitchenaid-black-friday", "entityType": "Combined", "parentBrand": "kitchenaid", "parentSeasonal": "black-friday", "name": "KitchenAid Black Friday Deals", "targetKeyword": "kitchenaid black friday deals", "slug": "kitchenaid-black-friday-deals", "volume": 0, "description": "KitchenAid Black Friday deals — save big on KitchenAid appliances." },
+    { "key": "knives-black-friday", "entityType": "Combined", "parentCategory": "knives", "parentSeasonal": "black-friday", "name": "Kitchen Knife Black Friday Deals", "targetKeyword": "kitchen knife black friday deals", "slug": "kitchen-knife-black-friday-deals", "volume": 0, "description": "Kitchen knife Black Friday deals — chef knives and knife sets on deep discount." }
+  ],
+  "pages": [
+    { "key": "privacy-policy", "entityType": "Page", "name": "Privacy Policy", "slug": "privacy-policy", "description": "Kitchen Deals privacy policy — how we collect, use, and protect your data." },
+    { "key": "terms-of-service", "entityType": "Page", "name": "Terms of Service", "slug": "terms-of-service", "description": "Kitchen Deals terms of service — rules for using our site." },
+    { "key": "contact", "entityType": "Page", "name": "Contact", "slug": "contact", "description": "Contact Kitchen Deals — get in touch with our team." },
+    { "key": "disclaimer", "entityType": "Page", "name": "Disclaimer", "slug": "disclaimer", "description": "Kitchen Deals disclaimer — legal disclosures and affiliate information." }
+  ]
+}

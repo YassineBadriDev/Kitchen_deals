@@ -1,0 +1,96 @@
+<%- include('partials/head') %>
+
+<section class="hero">
+  <div class="hero__inner">
+    <h1>My Watchlist</h1>
+    <p class="hero__intro">Products you're tracking for price drops</p>
+  </div>
+</section>
+
+<section class="hub-section">
+  <div class="hub-section__inner">
+    <div id="watchlistContent">
+      <div class="empty-state">
+        <p>Loading your watchlist...</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+
+<script>
+  const watchlistContent = document.getElementById('watchlistContent');
+  const watchlist = JSON.parse(localStorage.getItem('kitchendeals_watchlist') || '[]');
+
+  if (watchlist.length === 0) {
+    watchlistContent.innerHTML = `
+      <div class="empty-state">
+        <p>Your watchlist is empty</p>
+        <p>Browse products and click "Add to Watchlist" to track price changes.</p>
+        <a href="/products" class="btn-primary" style="margin-top:1rem;display:inline-block">Browse Products</a>
+      </div>
+    `;
+  } else {
+    watchlistContent.innerHTML = `
+      <div class="hub-section__header">
+        <h2>Tracking ${watchlist.length} product${watchlist.length > 1 ? 's' : ''}</h2>
+      </div>
+      <div class="deal-grid" id="watchlistGrid">
+        ${watchlist.map(id => `
+          <article class="deal-card product-card" id="product-${id}">
+            <div class="deal-card__body" style="text-align:center;padding:2rem">
+              <p>Loading product ${id}...</p>
+            </div>
+          </article>
+        `).join('')}
+      </div>
+    `;
+
+    // Load each product
+    watchlist.forEach(async (id) => {
+      try {
+        const resp = await fetch('/api/product/' + id);
+        if (resp.ok) {
+          const product = await resp.json();
+          const el = document.getElementById('product-' + id);
+          if (el) {
+            el.innerHTML = `
+              <a href="/product/${product.id}" class="deal-card__link">
+                <img class="deal-card__image" src="${product.image || '/placeholder.svg'}" alt="${product.title}" width="300" height="200" loading="lazy">
+              </a>
+              <div class="deal-card__body">
+                <h3 class="deal-card__title">
+                  <a href="/product/${product.id}">${product.title}</a>
+                </h3>
+                ${product.brand ? '<span class="deal-card__retailer">' + product.brand + '</span>' : ''}
+                <div class="deal-card__pricing">
+                  ${product.currentPrice ? '<span class="deal-card__price">$' + product.currentPrice + '</span>' : ''}
+                  ${product.lowestEver && product.currentPrice !== product.lowestEver ? '<span class="deal-card__orig-price">Low: $' + product.lowestEver + '</span>' : ''}
+                </div>
+                <button class="btn-remove-watchlist" data-id="${product.id}" style="margin-top:.5rem;background:none;border:1px solid #ccc;padding:.25rem .5rem;border-radius:4px;cursor:pointer;font-size:.75rem">Remove</button>
+              </div>
+            `;
+          }
+        }
+      } catch (e) {
+        console.error('Error loading product:', id, e);
+      }
+    });
+
+    // Handle remove buttons
+    document.addEventListener('click', function(e) {
+      if (e.target.classList.contains('btn-remove-watchlist')) {
+        const id = e.target.dataset.id;
+        let wl = JSON.parse(localStorage.getItem('kitchendeals_watchlist') || '[]');
+        wl = wl.filter(pid => pid !== id);
+        localStorage.setItem('kitchendeals_watchlist', JSON.stringify(wl));
+        const card = document.getElementById('product-' + id);
+        if (card) card.remove();
+        if (wl.length === 0) {
+          location.reload();
+        }
+      }
+    });
+  }
+</script>

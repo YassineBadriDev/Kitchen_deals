@@ -1,0 +1,102 @@
+<%- include('partials/head') %>
+
+<section class="hero">
+  <div class="hero__inner">
+    <h1><%= kw.h1 %></h1>
+    <p class="hero__intro"><%= kw.intro %></p>
+  </div>
+</section>
+
+<% if (typeof hubProducts !== 'undefined' && hubProducts.length > 0) { %>
+<section class="hub-section">
+  <div class="hub-section__inner">
+    <div class="hub-section__header">
+      <h2>Tracked Products</h2>
+      <p class="section-subtitle">Products we're tracking with price history</p>
+    </div>
+    <div class="deal-grid">
+      <% hubProducts.forEach(function(product) { %>
+        <article class="deal-card product-card">
+          <a href="/product/<%= product.id %>" class="deal-card__link">
+            <img class="deal-card__image" src="<%= product.image || '/placeholder.svg' %>" alt="<%= product.title %>" width="300" height="200" loading="lazy">
+          </a>
+          <div class="deal-card__body">
+            <h3 class="deal-card__title">
+              <a href="/product/<%= product.id %>"><%= product.title %></a>
+            </h3>
+            <div class="deal-card__pricing">
+              <% if (product.currentPrice) { %>
+                <span class="deal-card__price">$<%= product.currentPrice %></span>
+              <% } %>
+              <% if (product.lowestEver && product.currentPrice !== product.lowestEver) { %>
+                <span class="deal-card__orig-price">Low: $<%= product.lowestEver %></span>
+              <% } %>
+            </div>
+          </div>
+        </article>
+      <% }); %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<section class="hub-section">
+  <div class="hub-section__inner">
+    <div class="hub-section__header">
+      <h2><%= kw.h1 %> — Latest Deals</h2>
+    </div>
+    <% if (deals.length > 0) { %>
+      <div class="deal-grid">
+        <% deals.slice(0, 24).forEach(function(deal) { %>
+          <%- include('partials/dealcard', { deal: deal, addAffiliate: addAffiliate }) %>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <p>Checking for the latest deals on <%= hub.targetKeyword %>...</p>
+        <p>New deals are added daily from top retailers.</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<% if (kw.subHeaders.length > 0 || (kw.sections && kw.sections.length > 0)) { %>
+<section class="hub-subheadings">
+  <div class="hub-subheadings__inner">
+    <% if (kw.sections && kw.sections.length > 0) { %>
+      <% kw.sections.forEach(function(section) { %>
+        <div class="info-section">
+          <h2><%= section.heading %></h2>
+          <p><%= section.text %></p>
+          <% if (section.links && section.links.length > 0) { %>
+            <ul class="info-section__links">
+              <% section.links.forEach(function(link) { %>
+                <li><a href="<%= link.href %>"><%= link.label %></a></li>
+              <% }); %>
+            </ul>
+          <% } %>
+        </div>
+      <% }); %>
+    <% } else { %>
+      <% kw.subHeaders.forEach(function(h2) { %>
+        <h2><%= h2 %></h2>
+      <% }); %>
+    <% } %>
+  </div>
+</section>
+<% } %>
+
+<% if (relatedHubs.length > 0) { %>
+<section class="related-section">
+  <div class="related-section__inner">
+    <h2>Related Deals</h2>
+    <div class="cluster-grid">
+      <% relatedHubs.forEach(function(rh) { %>
+        <a href="/<%= rh.slug %>" class="cluster-card"><span><%= rh.name %></span></a>
+      <% }); %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<%- include('partials/footer') %>

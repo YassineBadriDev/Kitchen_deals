@@ -1,0 +1,49 @@
+Entity Type,Name,Target Keyword,URL Slug,Full URL,Keyword Count,Volume
+Pillar,Kitchen Deals,kitchen deals,kitchen-deals,https://kitchendeals.org/kitchen-deals,401,2510
+Seasonal,Black Friday Kitchen Deals,black friday kitchen appliance deals,black-friday-kitchen-appliance-deals,https://kitchendeals.org/black-friday-kitchen-appliance-deals,123,1830
+Seasonal,Cyber Monday Kitchen Deals,cyber monday kitchen deals,cyber-monday-kitchen-deals,https://kitchendeals.org/cyber-monday-kitchen-deals,24,560
+Seasonal,Prime Day Kitchen Deals,prime day kitchen deals,prime-day-kitchen-deals,https://kitchendeals.org/prime-day-kitchen-deals,33,460
+Seasonal,Memorial Day Kitchen Deals,memorial day kitchen deals,memorial-day-kitchen-deals,https://kitchendeals.org/memorial-day-kitchen-deals,4,20
+Seasonal,Labor Day Kitchen Deals,labor day kitchen deals,labor-day-kitchen-deals,https://kitchendeals.org/labor-day-kitchen-deals,2,20
+Brand,KitchenAid,kitchenaid deals,kitchenaid-deals,https://kitchendeals.org/kitchenaid-deals,62,570
+Brand,Shark,shark kitchen deals,shark-kitchen-deals,https://kitchendeals.org/shark-kitchen-deals,2,400
+Brand,Bosch,bosch kitchen deals,bosch-kitchen-deals,https://kitchendeals.org/bosch-kitchen-deals,21,160
+Brand,GE Appliances,ge kitchen appliance deals,ge-kitchen-appliance-deals,https://kitchendeals.org/ge-kitchen-appliance-deals,17,160
+Brand,Whirlpool,whirlpool kitchen deals,whirlpool-kitchen-deals,https://kitchendeals.org/whirlpool-kitchen-deals,22,140
+Brand,Frigidaire,frigidaire kitchen deals,frigidaire-kitchen-deals,https://kitchendeals.org/frigidaire-kitchen-deals,13,110
+Brand,Samsung,samsung kitchen deals,samsung-kitchen-deals,https://kitchendeals.org/samsung-kitchen-deals,15,90
+Brand,Stonewall Kitchen,stonewall kitchen deals,stonewall-kitchen-deals,https://kitchendeals.org/stonewall-kitchen-deals,5,70
+Brand,Dacor,dacor kitchen deals,dacor-kitchen-deals,https://kitchendeals.org/dacor-kitchen-deals,2,60
+Brand,LG,lg kitchen deals,lg-kitchen-deals,https://kitchendeals.org/lg-kitchen-deals,18,50
+Brand,Cuisinart,cuisinart deals,cuisinart-deals,https://kitchendeals.org/cuisinart-deals,1,20
+Brand,Pampered Chef,pampered chef deals,pampered-chef-deals,https://kitchendeals.org/pampered-chef-deals,2,20
+Brand,Ninja,ninja kitchen deals,ninja-kitchen-deals,https://kitchendeals.org/ninja-kitchen-deals,10,0
+Brand,Wolf,wolf kitchen appliance deals,wolf-kitchen-appliance-deals,https://kitchendeals.org/wolf-kitchen-appliance-deals,3,10
+Brand,Viking,viking kitchen appliance deals,viking-kitchen-appliance-deals,https://kitchendeals.org/viking-kitchen-appliance-deals,1,10
+Brand,Wusthof,wusthof knife deals,wusthof-knife-deals,https://kitchendeals.org/wusthof-knife-deals,1,10
+Brand,Zwilling,zwilling knife deals,zwilling-knife-deals,https://kitchendeals.org/zwilling-knife-deals,1,0
+Retailer,Amazon,amazon kitchen deals,amazon-kitchen-deals,https://kitchendeals.org/amazon-kitchen-deals,69,700
+Retailer,Aldi,aldi kitchen deals,aldi-kitchen-deals,https://kitchendeals.org/aldi-kitchen-deals,4,210
+Retailer,Dollar Tree,dollar tree kitchen deals,dollar-tree-kitchen-deals,https://kitchendeals.org/dollar-tree-kitchen-deals,1,200
+Retailer,Walmart,walmart kitchen deals,walmart-kitchen-deals,https://kitchendeals.org/walmart-kitchen-deals,7,10
+Retailer,Target,target kitchen deals,target-kitchen-deals,https://kitchendeals.org/target-kitchen-deals,4,10
+Retailer,IKEA,ikea kitchen deals,ikea-kitchen-deals,https://kitchendeals.org/ikea-kitchen-deals,5,10
+Retailer,Home Depot,home depot kitchen appliance deals,home-depot-kitchen-appliance-deals,https://kitchendeals.org/home-depot-kitchen-appliance-deals,6,0
+Retailer,Best Buy,best buy kitchen deals,best-buy-kitchen-deals,https://kitchendeals.org/best-buy-kitchen-deals,5,0
+Retailer,Lowe's,lowe's kitchen deals,lowes-kitchen-deals,https://kitchendeals.org/lowes-kitchen-deals,7,0
+Retailer,Costco,costco kitchen deals,costco-kitchen-deals,https://kitchendeals.org/costco-kitchen-deals,6,0
+Retailer,Macy's,macy's kitchen deals,macys-kitchen-deals,https://kitchendeals.org/macys-kitchen-deals,3,0
+Retailer,Nordstrom,nordstrom kitchen deals,nordstrom-kitchen-deals,https://kitchendeals.org/nordstrom-kitchen-deals,3,20
+Retailer,Wayfair,wayfair kitchen deals,wayfair-kitchen-deals,https://kitchendeals.org/wayfair-kitchen-deals,1,0
+Category,Kitchen Appliance Packages,kitchen appliance package deals,kitchen-appliance-package-deals,https://kitchendeals.org/kitchen-appliance-package-deals,92,990
+Category,Knives,kitchen knife deals,kitchen-knife-deals,https://kitchendeals.org/kitchen-knife-deals,39,280
+Category,Cookware,kitchen cookware deals,kitchen-cookware-deals,https://kitchendeals.org/kitchen-cookware-deals,5,20
+Category,Ovens & Ranges,kitchen oven deals,kitchen-oven-deals,https://kitchendeals.org/kitchen-oven-deals,6,10
+Category,Blenders,kitchen blender deals,kitchen-blender-deals,https://kitchendeals.org/kitchen-blender-deals,2,10
+Category,Grills & Griddles,kitchen grill deals,kitchen-grill-deals,https://kitchendeals.org/kitchen-grill-deals,1,10
+Category,Mixers,kitchen mixer deals,kitchen-mixer-deals,https://kitchendeals.org/kitchen-mixer-deals,3,0
+Category,Microwaves,kitchen microwave deals,kitchen-microwave-deals,https://kitchendeals.org/kitchen-microwave-deals,1,0
+Combined,KitchenAid Mixer Deals,kitchenaid mixer deals,kitchenaid-mixer-deals,https://kitchendeals.org/kitchenaid-mixer-deals,0,0
+Combined,KitchenAid Amazon Deals,kitchenaid amazon deals,kitchenaid-amazon-deals,https://kitchendeals.org/kitchenaid-amazon-deals,0,0
+Combined,KitchenAid Black Friday Deals,kitchenaid black friday deals,kitchenaid-black-friday-deals,https://kitchendeals.org/kitchenaid-black-friday-deals,0,0
+Combined,Kitchen Knife Black Friday Deals,kitchen knife black friday deals,kitchen-knife-black-friday-deals,https://kitchendeals.org/kitchen-knife-black-friday-deals,0,0

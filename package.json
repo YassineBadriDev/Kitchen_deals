@@ -1,0 +1,40 @@
+{
+  "name": "kitchendeals",
+  "version": "1.0.0",
+  "description": "Kitchen Deals - Kitchen appliance deals, discounts and promo codes",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "scrape": "node src/scraping/run.js",
+    "scrape:profile": "node src/scraping/run.js --profile",
+    "scrape:amazon": "node src/scraping/run.js --profile amazon",
+    "scrape:bestbuy": "node src/scraping/run.js --profile bestbuy",
+    "scrape:walmart": "node src/scraping/run.js --profile walmart",
+    "scrape:target": "node src/scraping/run.js --profile target",
+    "scrape:all": "node src/scraping/run.js --all",
+    "scheduler": "node src/scraping/scheduler.js",
+    "scheduler:once": "node src/scraping/scheduler.js --once",
+    "icons": "node scripts/icons.js",
+    "sitemap": "node scripts/generate-sitemap.js",
+    "build": "npm run icons && npm run sitemap",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.0",
+    "cheerio": "^1.0.0",
+    "crawlee": "^3.11.0",
+    "ejs": "^3.1.10",
+    "express": "^4.21.0",
+    "node-cron": "^4.6.0",
+    "playwright": "^1.49.0",
+    "playwright-extra": "^4.3.6",
+    "puppeteer": "^23.0.0",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  },
+  "devDependencies": {
+    "sharp": "^0.33.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

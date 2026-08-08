@@ -1,0 +1,179 @@
+<%- include('partials/head') %>
+
+<section class="hero">
+  <div class="hero__inner">
+    <h1><%= kw.h1 %></h1>
+    <p class="hero__intro"><%= kw.intro %></p>
+  </div>
+</section>
+
+<% if (priceDrops && priceDrops.length > 0) { %>
+<section class="hub-section price-drops-section">
+  <div class="hub-section__inner">
+    <div class="hub-section__header">
+      <h2>&#128176; Biggest Price Drops</h2>
+      <p class="section-subtitle">Products with the biggest discounts from their average price</p>
+    </div>
+    <div class="deal-grid">
+      <% priceDrops.forEach(function(product) { %>
+        <article class="deal-card product-card">
+          <a href="/product/<%= product.id %>" class="deal-card__link">
+            <img class="deal-card__image" src="<%= product.image || '/placeholder.svg' %>" alt="<%= product.title %>" width="300" height="200" loading="lazy">
+          </a>
+          <div class="deal-card__body">
+            <h3 class="deal-card__title">
+              <a href="/product/<%= product.id %>"><%= product.title %></a>
+            </h3>
+            <% if (product.brand) { %><span class="deal-card__retailer"><%= product.brand %></span><% } %>
+            <div class="deal-card__pricing">
+              <% if (product.currentPrice) { %>
+                <span class="deal-card__price">$<%= product.currentPrice %></span>
+              <% } %>
+              <% if (product.avgPrice && product.currentPrice < product.avgPrice) { %>
+                <span class="deal-card__orig-price"><del>$<%= product.avgPrice %></del></span>
+              <% } %>
+              <% if (product.dropPct) { %>
+                <span class="deal-card__discount">-<%= product.dropPct %>%</span>
+              <% } %>
+            </div>
+            <% if (product.priceHistory.length > 1) { %>
+              <span class="deal-card__valid">Price tracked across <%= product.priceHistory.length %> updates</span>
+            <% } %>
+          </div>
+        </article>
+      <% }); %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<section class="hub-section">
+  <div class="hub-section__inner">
+    <div class="hub-section__header">
+      <h2>Today's Best Kitchen Deals</h2>
+    </div>
+    <% if (deals.length > 0) { %>
+      <div class="deal-grid">
+        <% deals.slice(0, 24).forEach(function(deal) { %>
+          <%- include('partials/dealcard', { deal: deal, addAffiliate: addAffiliate }) %>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <p>Checking for the latest kitchen deals...</p>
+        <p>New deals are added daily from top retailers.</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<% if (trendingProducts && trendingProducts.length > 0) { %>
+<section class="hub-section trending-section">
+  <div class="hub-section__inner">
+    <div class="hub-section__header">
+      <h2>&#128200; Trending Products</h2>
+      <p class="section-subtitle">Products currently near their lowest price</p>
+    </div>
+    <div class="deal-grid">
+      <% trendingProducts.forEach(function(product) { %>
+        <article class="deal-card product-card">
+          <a href="/product/<%= product.id %>" class="deal-card__link">
+            <img class="deal-card__image" src="<%= product.image || '/placeholder.svg' %>" alt="<%= product.title %>" width="300" height="200" loading="lazy">
+          </a>
+          <div class="deal-card__body">
+            <h3 class="deal-card__title">
+              <a href="/product/<%= product.id %>"><%= product.title %></a>
+            </h3>
+            <% if (product.brand) { %><span class="deal-card__retailer"><%= product.brand %></span><% } %>
+            <div class="deal-card__pricing">
+              <% if (product.currentPrice) { %>
+                <span class="deal-card__price">$<%= product.currentPrice %></span>
+              <% } %>
+              <% if (product.lowestEver && product.currentPrice !== product.lowestEver) { %>
+                <span class="deal-card__orig-price">Lowest: $<%= product.lowestEver %></span>
+              <% } %>
+            </div>
+          </div>
+        </article>
+      <% }); %>
+    </div>
+    <div class="section-cta">
+      <a href="/products" class="btn-primary">View All Products &rarr;</a>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<section class="clusters-section">
+  <div class="clusters-section__inner">
+    <% if (kw.sections && kw.sections.length > 0) { %>
+      <% kw.sections.forEach(function(section) { %>
+        <div class="info-section">
+          <h2><%= section.heading %></h2>
+          <p><%= section.text %></p>
+          <% if (section.links && section.links.length > 0) { %>
+            <ul class="info-section__links">
+              <% section.links.forEach(function(link) { %>
+                <li><a href="<%= link.href %>"><%= link.label %></a></li>
+              <% }); %>
+            </ul>
+          <% } %>
+        </div>
+      <% }); %>
+    <% } else { %>
+      <% kw.subHeaders.forEach(function(h2) { %>
+        <h2><%= h2 %></h2>
+      <% }); %>
+    <% } %>
+
+    <div class="cluster-group">
+      <h2>Seasonal Kitchen Deals</h2>
+      <div class="cluster-grid">
+        <a href="/black-friday-kitchen-appliance-deals" class="cluster-card"><span class="cluster-card__icon">&#127876;</span><span>Black Friday</span></a>
+        <a href="/cyber-monday-kitchen-deals" class="cluster-card"><span class="cluster-card__icon">&#128187;</span><span>Cyber Monday</span></a>
+        <a href="/prime-day-kitchen-deals" class="cluster-card"><span class="cluster-card__icon">&#128230;</span><span>Prime Day</span></a>
+        <a href="/memorial-day-kitchen-deals" class="cluster-card"><span class="cluster-card__icon">&#127482;&#127480;</span><span>Memorial Day</span></a>
+        <a href="/labor-day-kitchen-deals" class="cluster-card"><span class="cluster-card__icon">&#128736;</span><span>Labor Day</span></a>
+      </div>
+    </div>
+
+    <div class="cluster-group">
+      <h2>Top Brand Deals</h2>
+      <div class="cluster-grid">
+        <% relatedHubs.filter(function(h) { return h.entityType === 'Brand'; }).slice(0, 8).forEach(function(h) { %>
+          <a href="/<%= h.slug %>" class="cluster-card"><span><%= h.name %></span></a>
+        <% }); %>
+      </div>
+    </div>
+
+    <div class="cluster-group">
+      <h2>Shop by Category</h2>
+      <div class="cluster-grid">
+        <a href="/kitchen-appliance-package-deals" class="cluster-card"><span>Appliance Packages</span></a>
+        <a href="/kitchen-knife-deals" class="cluster-card"><span>Knives</span></a>
+        <a href="/kitchen-cookware-deals" class="cluster-card"><span>Cookware</span></a>
+        <a href="/kitchen-oven-deals" class="cluster-card"><span>Ovens &amp; Ranges</span></a>
+        <a href="/kitchen-blender-deals" class="cluster-card"><span>Blenders</span></a>
+        <a href="/kitchen-mixer-deals" class="cluster-card"><span>Mixers</span></a>
+        <a href="/kitchen-microwave-deals" class="cluster-card"><span>Microwaves</span></a>
+        <a href="/kitchen-grill-deals" class="cluster-card"><span>Grills</span></a>
+      </div>
+    </div>
+
+    <div class="cluster-group">
+      <h2>Shop by Retailer</h2>
+      <div class="cluster-grid">
+        <a href="/amazon-kitchen-deals" class="cluster-card"><span>Amazon</span></a>
+        <a href="/walmart-kitchen-deals" class="cluster-card"><span>Walmart</span></a>
+        <a href="/best-buy-kitchen-deals" class="cluster-card"><span>Best Buy</span></a>
+        <a href="/target-kitchen-deals" class="cluster-card"><span>Target</span></a>
+        <a href="/home-depot-kitchen-appliance-deals" class="cluster-card"><span>Home Depot</span></a>
+        <a href="/lowes-kitchen-deals" class="cluster-card"><span>Lowe's</span></a>
+        <a href="/costco-kitchen-deals" class="cluster-card"><span>Costco</span></a>
+        <a href="/ikea-kitchen-deals" class="cluster-card"><span>IKEA</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

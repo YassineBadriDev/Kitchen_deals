@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 40">
+  <g transform="translate(0,2)">
+    <path d="M10,24 L10,12 C10,6 14,2 20,2 C26,2 30,6 30,12 L30,24 Z" fill="#fff"/>
+    <rect x="7" y="24" width="26" height="8" rx="2" fill="#fff"/>
+    <circle cx="17" cy="13" r="1.5" fill="#3c5b0a"/>
+    <circle cx="23" cy="17" r="1.5" fill="#3c5b0a"/>
+    <line x1="19" y1="17" x2="21" y2="13" stroke="#3c5b0a" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+  <text x="42" y="22" font-family="Georgia,'Times New Roman',serif" font-size="17" font-weight="700" fill="#fff">Kitchen</text>
+  <text x="113" y="22" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="3" fill="#fff">DEALS</text>
+</svg>

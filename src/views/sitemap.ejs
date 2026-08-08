@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc><%= site.url %>/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <% hubs.forEach(function(hub) { %>
+  <url>
+    <loc><%= site.url %>/<%= hub.slug %></loc>
+    <changefreq>weekly</changefreq>
+    <priority><%= hub.entityType === 'Pillar' ? '1.0' : hub.entityType === 'Seasonal' ? '0.9' : '0.8' %></priority>
+  </url>
+  <% }); %>
+  <% if (typeof products !== 'undefined' && products.length > 0) { %>
+  <% products.forEach(function(product) { %>
+  <url>
+    <loc><%= site.url %>/product/<%= product.id %></loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <% }); %>
+  <% } %>
+  <url>
+    <loc><%= site.url %>/privacy-policy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc><%= site.url %>/terms-of-service</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc><%= site.url %>/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc><%= site.url %>/disclaimer</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>

@@ -1,0 +1,228 @@
+<%- include('partials/head') %>
+
+<section class="hero hero--product">
+  <div class="hero__inner">
+    <h1><%= product.title %></h1>
+    <div class="product-meta">
+      <% if (product.brand) { %><span class="product-meta__brand"><%= product.brand %></span><% } %>
+      <% if (product.retailer) { %><span class="product-meta__retailer">at <%= product.retailer %></span><% } %>
+    </div>
+  </div>
+</section>
+
+<section class="product-detail">
+  <div class="product-detail__inner">
+    <div class="product-detail__main">
+      <% if (product.image) { %>
+        <img class="product-detail__image" src="<%= product.image %>" alt="<%= product.title %>" width="400" height="400">
+      <% } else { %>
+        <img class="product-detail__image" src="/placeholder.svg" alt="<%= product.title %>" width="400" height="400">
+      <% } %>
+
+      <div class="product-detail__pricing">
+        <% if (product.currentPrice) { %>
+          <span class="product-detail__price">$<%= product.currentPrice %></span>
+        <% } %>
+        <% if (product.lowestEver && product.lowestEver !== product.currentPrice) { %>
+          <span class="product-detail__lowest">Lowest ever: $<%= product.lowestEver %></span>
+        <% } %>
+        <% if (product.highestEver) { %>
+          <span class="product-detail__highest">Highest: $<%= product.highestEver %></span>
+        <% } %>
+        <% if (product.avgPrice) { %>
+          <span class="product-detail__avg">Average: $<%= product.avgPrice %></span>
+        <% } %>
+      </div>
+
+      <% if (product.url) { %>
+        <a href="<%= addAffiliate(product.url, product.retailer) %>" target="_blank" rel="noopener noreferrer" class="product-detail__cta">
+          View at <%= product.retailer %>
+        </a>
+      <% } %>
+
+      <button class="product-detail__watchlist" id="watchlistBtn" data-product-id="<%= product.id %>">
+        <span class="watchlist-icon">&#9734;</span> Add to Watchlist
+      </button>
+    </div>
+
+    <div class="product-detail__history">
+      <h2>Price History</h2>
+      <div class="price-chart" id="priceChart" 
+           data-prices='<%= JSON.stringify(product.priceHistory.filter(p => p.price > 0).map(p => ({ price: p.price, date: p.timestamp, retailer: p.retailer }))) %>'>
+      </div>
+      <div class="price-stats">
+        <div class="price-stat">
+          <span class="price-stat__label">Current</span>
+          <span class="price-stat__value"><%= product.currentPrice ? '$' + product.currentPrice : 'N/A' %></span>
+        </div>
+        <div class="price-stat">
+          <span class="price-stat__label">Lowest</span>
+          <span class="price-stat__value"><%= product.lowestEver ? '$' + product.lowestEver : 'N/A' %></span>
+        </div>
+        <div class="price-stat">
+          <span class="price-stat__label">Average</span>
+          <span class="price-stat__value"><%= product.avgPrice ? '$' + product.avgPrice : 'N/A' %></span>
+        </div>
+        <div class="price-stat">
+          <span class="price-stat__label">Highest</span>
+          <span class="price-stat__value"><%= product.highestEver ? '$' + product.highestEver : 'N/A' %></span>
+        </div>
+      </div>
+      <% if (product.priceHistory.length > 1) { %>
+        <p class="price-history-note">Tracked <%= product.priceHistory.length %> price points since <%= new Date(product.firstSeen).toLocaleDateString() %></p>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<% if (relatedProducts && relatedProducts.length > 0) { %>
+<section class="related-section">
+  <div class="related-section__inner">
+    <h2>Similar Products</h2>
+    <div class="deal-grid">
+      <% relatedProducts.forEach(function(p) { %>
+        <article class="deal-card">
+          <a href="/product/<%= p.id %>" class="deal-card__link">
+            <img class="deal-card__image" src="<%= p.image || '/placeholder.svg' %>" alt="<%= p.title %>" width="300" height="200" loading="lazy">
+          </a>
+          <div class="deal-card__body">
+            <h3 class="deal-card__title">
+              <a href="/product/<%= p.id %>"><%= p.title %></a>
+            </h3>
+            <% if (p.retailer) { %>
+              <span class="deal-card__retailer"><%= p.retailer %></span>
+            <% } %>
+            <div class="deal-card__pricing">
+              <% if (p.currentPrice) { %>
+                <span class="deal-card__price">$<%= p.currentPrice %></span>
+              <% } %>
+              <% if (p.lowestEver && p.lowestEver < p.currentPrice) { %>
+                <span class="deal-card__orig-price"><del>$<%= p.lowestEver %></del></span>
+              <% } %>
+            </div>
+          </div>
+        </article>
+      <% }); %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<% if (priceComparison && priceComparison.retailers && priceComparison.retailers.length > 1) { %>
+<section class="product-detail">
+  <div class="product-detail__inner">
+    <div class="product-detail__history">
+      <h2>Price Comparison by Retailer</h2>
+      <div class="price-comparison-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Retailer</th>
+              <th>Current Price</th>
+              <th>Lowest</th>
+              <th>Highest</th>
+              <th>Average</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% priceComparison.retailers.forEach(function(r) { %>
+              <tr>
+                <td><strong><%= r.retailer %></strong></td>
+                <td><%= r.latestPrice ? '$' + r.latestPrice : 'N/A' %></td>
+                <td><%= r.lowestPrice ? '$' + r.lowestPrice : 'N/A' %></td>
+                <td><%= r.highestPrice ? '$' + r.highestPrice : 'N/A' %></td>
+                <td><%= r.avgPrice ? '$' + r.avgPrice : 'N/A' %></td>
+                <td>
+                  <% if (r.latestUrl) { %>
+                    <a href="<%= addAffiliate(r.latestUrl, r.retailer) %>" target="_blank" rel="noopener noreferrer" class="btn-small">View Deal</a>
+                  <% } %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<%- include('partials/footer') %>
+
+<script>
+  const chartEl = document.getElementById('priceChart');
+  if (chartEl) {
+    const data = JSON.parse(chartEl.dataset.prices || '[]');
+    if (data.length > 0) {
+      const prices = data.map(d => d.price);
+      const min = Math.min(...prices);
+      const max = Math.max(...prices);
+      const range = max - min || 1;
+      const width = chartEl.offsetWidth || 600;
+      const height = 200;
+      const padding = 40;
+
+      let svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">`;
+      svg += `<rect width="${width}" height="${height}" fill="#f8f9fa" rx="8"/>`;
+
+      // Grid lines
+      for (let i = 0; i <= 4; i++) {
+        const y = padding + ((height - 2 * padding) * i / 4);
+        const val = max - (range * i / 4);
+        svg += `<line x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" stroke="#e9ecef" stroke-width="1"/>`;
+        svg += `<text x="${padding - 5}" y="${y + 4}" text-anchor="end" font-size="10" fill="#999">$${val.toFixed(0)}</text>`;
+      }
+
+      // Price line
+      const points = data.map((d, i) => {
+        const x = padding + (i / Math.max(data.length - 1, 1)) * (width - 2 * padding);
+        const y = padding + ((max - d.price) / range) * (height - 2 * padding);
+        return `${x},${y}`;
+      });
+
+      svg += `<polyline points="${points.join(' ')}" fill="none" stroke="#3c5b0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+      // Current price dot
+      if (data.length > 0) {
+        const last = data[data.length - 1];
+        const x = width - padding;
+        const y = padding + ((max - last.price) / range) * (height - 2 * padding);
+        svg += `<circle cx="${x}" cy="${y}" r="4" fill="#3c5b0a"/>`;
+        svg += `<text x="${x}" y="${y - 10}" text-anchor="middle" font-size="11" font-weight="bold" fill="#3c5b0a">$${last.price}</text>`;
+      }
+
+      svg += '</svg>';
+      chartEl.innerHTML = svg;
+    }
+  }
+
+  // Watchlist functionality
+  const watchlistBtn = document.getElementById('watchlistBtn');
+  if (watchlistBtn) {
+    const productId = watchlistBtn.dataset.productId;
+    let watchlist = JSON.parse(localStorage.getItem('kitchendeals_watchlist') || '[]');
+
+    function updateButton() {
+      if (watchlist.includes(productId)) {
+        watchlistBtn.innerHTML = '<span class="watchlist-icon">&#9733;</span> In Watchlist';
+        watchlistBtn.classList.add('active');
+      } else {
+        watchlistBtn.innerHTML = '<span class="watchlist-icon">&#9734;</span> Add to Watchlist';
+        watchlistBtn.classList.remove('active');
+      }
+    }
+
+    updateButton();
+
+    watchlistBtn.addEventListener('click', function() {
+      if (watchlist.includes(productId)) {
+        watchlist = watchlist.filter(id => id !== productId);
+      } else {
+        watchlist.push(productId);
+      }
+      localStorage.setItem('kitchendeals_watchlist', JSON.stringify(watchlist));
+      updateButton();
+    });
+  }
+</script>

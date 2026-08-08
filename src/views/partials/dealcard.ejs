@@ -1,0 +1,39 @@
+<% if (deal) {
+  const cat = (deal.category || '').toLowerCase();
+  let placeholder = '/placeholder.svg';
+  if (cat.includes('microwave') || cat.includes('blender') || cat.includes('mixer') || cat.includes('coffee') || cat.includes('vacuum') || cat.includes('countertop')) {
+    placeholder = '/placeholder-small-appliance.svg';
+  } else if (cat.includes('refrigerator') || cat.includes('range') || cat.includes('dishwasher') || cat.includes('oven') || cat.includes('major') || cat.includes('package')) {
+    placeholder = '/placeholder-appliance.svg';
+  } else if (cat.includes('knife') || cat.includes('knives') || cat.includes('cookware') || cat.includes('kitchenware')) {
+    placeholder = '/placeholder-knife.svg';
+  } else if (cat.includes('cookware') || cat.includes('pot') || cat.includes('pan')) {
+    placeholder = '/placeholder-cookware.svg';
+  }
+%>
+<article class="deal-card">
+  <img class="deal-card__image" src="<%= deal.image || placeholder %>" alt="<%= deal.title %>" width="300" height="200" loading="lazy">
+  <div class="deal-card__body">
+    <h3 class="deal-card__title">
+      <a href="<%= addAffiliate(deal.url, deal.retailer) %>" target="_blank" rel="noopener noreferrer"><%= deal.title %></a>
+    </h3>
+    <% if (deal.retailer) { %>
+      <span class="deal-card__retailer"><%= deal.retailer %></span>
+    <% } %>
+    <div class="deal-card__pricing">
+      <% if (deal.price) { %>
+        <span class="deal-card__price">$<%= deal.price %></span>
+      <% } %>
+      <% if (deal.origPrice) { %>
+        <span class="deal-card__orig-price"><del>$<%= deal.origPrice %></del></span>
+      <% } %>
+      <% if (deal.discountPct) { %>
+        <span class="deal-card__discount">-<%= deal.discountPct %>%</span>
+      <% } %>
+    </div>
+    <% if (deal.validThrough) { %>
+      <time class="deal-card__valid" datetime="<%= deal.validThrough %>">Valid through <%= deal.validThrough %></time>
+    <% } %>
+  </div>
+</article>
+<% } %>
