@@ -33,6 +33,14 @@ function head({ title, description, canonical, image, jsonLd = [], site = SITE }
   <meta name="twitter:title" content="${escapeHtml(title)}">
   <meta name="twitter:description" content="${escapeHtml(description || '')}">
   ${jsonLdScripts(jsonLd)}
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-S7BVCX3513"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-S7BVCX3513');
+  </script>
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
