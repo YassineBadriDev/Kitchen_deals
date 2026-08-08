@@ -262,6 +262,15 @@ export async function ingest(env, payload) {
   return { dealsInserted, dealsUpdated, productsInserted, productsUpdated, pricePoints };
 }
 
+export async function getLastUpdated(env) {
+  const deal = await env.DB.prepare(`SELECT MAX(scraped_at) AS t FROM deals`).first();
+  const prod = await env.DB.prepare(`SELECT MAX(last_updated) AS t FROM products`).first();
+  const timestamps = [deal && deal.t, prod && prod.t].filter(Boolean);
+  if (!timestamps.length) return null;
+  const iso = timestamps.sort().pop();
+  return iso;
+}
+
 export async function stats(env) {
   const deals = await env.DB.prepare(`SELECT COUNT(*) AS n FROM deals`).first();
   const products = await env.DB.prepare(`SELECT COUNT(*) AS n FROM products`).first();

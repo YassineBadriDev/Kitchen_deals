@@ -29,10 +29,11 @@ export default {
 
     if (pathname === '/') {
       const hub = CLUSTERS.pillar;
-      const [deals, priceDrops, trendingProducts] = await Promise.all([
+      const [deals, priceDrops, trendingProducts, updatedAt] = await Promise.all([
         db.getDeals(env),
         db.getPriceDrops(env, 15, 8),
         db.getTrendingProducts(env, 8),
+        db.getLastUpdated(env),
       ]);
       const kw = getKeywordData(hub, CLUSTERS);
       const relatedHubs = [
@@ -41,7 +42,7 @@ export default {
         ...CLUSTERS.categories.slice(0, 4),
       ];
       const seo = seoMiddleware(hub, SITE, kw);
-      return html(render.pageHome({ hub, deals, relatedHubs, kw, priceDrops, trendingProducts, seo, affiliateLinks }));
+      return html(render.pageHome({ hub, deals, relatedHubs, kw, priceDrops, trendingProducts, seo, affiliateLinks, updatedAt }));
     }
 
     if (pathname === '/sitemap.xml') {
@@ -53,7 +54,7 @@ export default {
     if (pathname === '/llms.txt') return text(render.llmsTxt());
 
     if (pathname === '/products') {
-      const products = await db.getProducts(env);
+      const [products, updatedAt] = await Promise.all([db.getProducts(env), db.getLastUpdated(env)]);
       const hub = {
         title: 'Kitchen Products',
         description: 'Track kitchen products with price history',
@@ -75,23 +76,24 @@ export default {
         metaDescription: 'Track kitchen products with price history',
       };
       const seo = { title: 'Kitchen Products | ' + SITE.name, description: kw.metaDescription, canonical: `${SITE.url}/products`, jsonLd: [] };
-      return html(render.pageHub({ hub, deals: products, hubProducts: [], relatedHubs: [], kw, seo, affiliateLinks }));
+      return html(render.pageHub({ hub, deals: products, hubProducts: [], relatedHubs: [], kw, seo, affiliateLinks, updatedAt }));
     }
 
     if (pathname === '/watchlist') {
+      const updatedAt = await db.getLastUpdated(env);
       const seo = {
         title: 'My Watchlist - Track Kitchen Product Prices | ' + SITE.name,
         description: 'Track kitchen products you are interested in and get notified about price drops.',
         canonical: `${SITE.url}/watchlist`,
         jsonLd: [],
       };
-      return html(render.pageWatchlist({ seo }));
+      return html(render.pageWatchlist({ seo, updatedAt }));
     }
 
     const productMatch = pathname.match(/^\/product\/([^/]+)$/);
     if (productMatch) {
-      const product = await db.getProduct(env, productMatch[1]);
-      if (!product) return html(render.pageNotFound(), 404);
+      const [product, updatedAt] = await Promise.all([db.getProduct(env, productMatch[1]), db.getLastUpdated(env)]);
+      if (!product) return html(render.pageNotFound({ updatedAt }), 404);
       const products = await db.getProducts(env);
       const relatedProducts = products
         .filter((p) => p.id !== product.id && (p.brand === product.brand || p.category === product.category))
@@ -143,11 +145,12 @@ export default {
         canonical: `${SITE.url}/product/${product.id}`,
         jsonLd,
       };
-      return html(render.pageProduct({ product, relatedProducts, priceComparison, seo, affiliateLinks }));
+      return html(render.pageProduct({ product, relatedProducts, priceComparison, seo, affiliateLinks, updatedAt }));
     }
 
     const legal = LEGAL_SLUGS.find((s) => `/${s}` === pathname);
     if (legal) {
+      const updatedAt = await db.getLastUpdated(env);
       const page = {
         name: legal === 'privacy-policy' ? 'Privacy Policy' : legal === 'terms-of-service' ? 'Terms of Service' : legal === 'contact' ? 'Contact Us' : 'Disclaimer',
       };
@@ -163,21 +166,21 @@ export default {
         canonical: `${SITE.url}/${legal}`,
         jsonLd: [],
       };
-      return html(render.pageLegal({ hub: { name: page.name, slug: legal, entityType: 'Page' }, content: LEGAL_HTML[legal], seo }));
+      return html(render.pageLegal({ hub: { name: page.name, slug: legal, entityType: 'Page' }, content: LEGAL_HTML[legal], seo, updatedAt }));
     }
 
     const hub = hubMap[pathname.slice(1)];
     if (hub) {
-      const [deals, products] = await Promise.all([db.getDeals(env), db.getProducts(env)]);
+      const [deals, products, updatedAt] = await Promise.all([db.getDeals(env), db.getProducts(env), db.getLastUpdated(env)]);
       const hubDeals = filterDeals(deals, hub);
       const kw = getKeywordData(hub, CLUSTERS);
       const hubProds = hubProducts(products, hub);
       const related = relatedHubsFor(hub, hubDeals);
       const seo = seoMiddleware(hub, SITE, kw);
-      return html(render.pageHub({ hub, deals: hubDeals, hubProducts: hubProds, relatedHubs: related, kw, seo, affiliateLinks }));
+      return html(render.pageHub({ hub, deals: hubDeals, hubProducts: hubProds, relatedHubs: related, kw, seo, affiliateLinks, updatedAt }));
     }
 
-    return html(render.pageNotFound(), 404);
+    return html(render.pageNotFound({ updatedAt: await db.getLastUpdated(env) }), 404);
   },
 };
 

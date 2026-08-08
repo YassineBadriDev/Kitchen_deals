@@ -9,7 +9,7 @@ function jsonLdScripts(jsonLd) {
     .join('\n  ');
 }
 
-function head({ title, description, canonical, image, jsonLd = [], site = SITE }) {
+function head({ title, description, canonical, image, jsonLd = [], site = SITE, updatedAt = null }) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,16 +44,20 @@ function head({ title, description, canonical, image, jsonLd = [], site = SITE }
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-  ${header()}
+  ${header(updatedAt)}
   <main>`;
 }
 
-function header() {
+function header(updatedAt = null) {
+  const updated = updatedAt
+    ? `<span class="site-header__updated" title="${escapeHtml(updatedAt)}">Updated ${escapeHtml(formatDate(updatedAt))}</span>`
+    : '';
   return `<header class="site-header">
   <div class="site-header__inner">
     <a href="/" class="site-header__logo" aria-label="Kitchen Deals Home">
       <img src="/logo.svg" alt="Kitchen Deals" width="150" height="30">
     </a>
+    ${updated}
     <nav class="site-header__nav" aria-label="Main navigation">
       <button class="site-header__hamburger" aria-label="Open menu" aria-expanded="false">
         <span></span><span></span><span></span>
@@ -139,10 +143,16 @@ function footer() {
 </html>`;
 }
 
-export function layout({ title, description, canonical, image, jsonLd = [], body = '', site = SITE }) {
-  return `${head({ title, description, canonical, image, jsonLd, site })}
+export function layout({ title, description, canonical, image, jsonLd = [], body = '', site = SITE, updatedAt = null }) {
+  return `${head({ title, description, canonical, image, jsonLd, site, updatedAt })}
   ${body}
   ${footer()}`;
+}
+
+function formatDate(iso) {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  return d.toUTCString().replace(/ GMT$/, ' UTC');
 }
 
 function placeholderFor(category) {
@@ -233,7 +243,7 @@ function clusterGroup(title, links) {
 </div>`;
 }
 
-export function pageHome({ hub, deals, relatedHubs, kw, priceDrops, trendingProducts, seo, affiliateLinks, site = SITE }) {
+export function pageHome({ hub, deals, relatedHubs, kw, priceDrops, trendingProducts, seo, affiliateLinks, site = SITE, updatedAt = null }) {
   const body = `
   ${hero(kw.h1, kw.intro)}
 
@@ -322,10 +332,10 @@ export function pageHome({ hub, deals, relatedHubs, kw, priceDrops, trendingProd
     </div>
   </section>`;
 
-  return layout({ title: seo.title, description: seo.description, canonical: seo.canonical, jsonLd: seo.jsonLd, body, site });
+  return layout({ title: seo.title, description: seo.description, canonical: seo.canonical, jsonLd: seo.jsonLd, body, site, updatedAt });
 }
 
-export function pageHub({ hub, deals, hubProducts, relatedHubs, kw, seo, affiliateLinks, site = SITE }) {
+export function pageHub({ hub, deals, hubProducts, relatedHubs, kw, seo, affiliateLinks, site = SITE, updatedAt = null }) {
   const body = `
   ${hero(kw.h1, kw.intro)}
 
@@ -379,7 +389,7 @@ export function pageHub({ hub, deals, hubProducts, relatedHubs, kw, seo, affilia
     </div>
   </section>` : ''}`;
 
-  return layout({ title: seo.title, description: seo.description, canonical: seo.canonical, jsonLd: seo.jsonLd, body, site });
+  return layout({ title: seo.title, description: seo.description, canonical: seo.canonical, jsonLd: seo.jsonLd, body, site, updatedAt });
 }
 
 function formatDateLabel(dateStr) {
@@ -389,7 +399,7 @@ function formatDateLabel(dateStr) {
   return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
 
-export function pageProduct({ product, relatedProducts, priceComparison, seo, affiliateLinks, site = SITE }) {
+export function pageProduct({ product, relatedProducts, priceComparison, seo, affiliateLinks, site = SITE, updatedAt = null }) {
   const body = `
   <section class="hero hero--product">
     <div class="hero__inner">
@@ -585,10 +595,10 @@ export function pageProduct({ product, relatedProducts, priceComparison, seo, af
   }
   </script>`;
 
-  return layout({ title: seo.title, description: seo.description, canonical: seo.canonical, jsonLd: seo.jsonLd, body, site });
+  return layout({ title: seo.title, description: seo.description, canonical: seo.canonical, jsonLd: seo.jsonLd, body, site, updatedAt });
 }
 
-export function pageWatchlist({ seo, site = SITE }) {
+export function pageWatchlist({ seo, site = SITE, updatedAt = null }) {
   const body = `
   ${hero('My Watchlist', "Products you're tracking for price drops")}
 
@@ -676,10 +686,10 @@ export function pageWatchlist({ seo, site = SITE }) {
   }
   </script>`;
 
-  return layout({ title: seo.title, description: seo.description, canonical: seo.canonical, jsonLd: seo.jsonLd, body, site });
+  return layout({ title: seo.title, description: seo.description, canonical: seo.canonical, jsonLd: seo.jsonLd, body, site, updatedAt });
 }
 
-export function pageLegal({ hub, content, seo, site = SITE }) {
+export function pageLegal({ hub, content, seo, site = SITE, updatedAt = null }) {
   const body = `
   <section class="legal-page">
     <div class="legal-page__inner">
@@ -689,10 +699,11 @@ export function pageLegal({ hub, content, seo, site = SITE }) {
       </div>
     </div>
   </section>`;
-  return layout({ title: seo.title, description: seo.description, canonical: seo.canonical, jsonLd: seo.jsonLd, body, site });
+  return layout({ title: seo.title, description: seo.description, canonical: seo.canonical, jsonLd: seo.jsonLd, body, site, updatedAt });
 }
 
-export function pageNotFound({ site = SITE } = {}) {
+
+export function pageNotFound({ site = SITE, updatedAt = null } = {}) {
   return layout({
     title: 'Page Not Found | ' + site.name,
     description: 'The page you are looking for does not exist.',
@@ -709,6 +720,7 @@ export function pageNotFound({ site = SITE } = {}) {
     </div>
   </section>`,
     site,
+    updatedAt,
   });
 }
 
