@@ -1,0 +1,30 @@
+name = "kitchen-deals"
+main = "src/index.js"
+compatibility_date = "2026-08-01"
+
+# Static assets (css, logos, product images, favicons) served from the repo's public/.
+# Requests that match a file are served directly; everything else hits the Worker.
+[assets]
+directory = "../public"
+binding = "ASSETS"
+not_found_handling = "none"
+
+[observability]
+enabled = true
+
+[vars]
+ENVIRONMENT = "production"
+SITE_URL = "https://kitchendeals.org"
+
+# Affiliate links live in the AFFILIATE_LINKS secret so they can be changed
+# from the dashboard without redeploying code. Format (JSON):
+#   {"amazon":"tag=kitchendeals-20","bestbuy":"affid=…","walmart":"…","target":"…","homedepot":"…","lowes":"…","costco":"…"}
+# set via: wrangler secret put AFFILIATE_LINKS
+
+[[d1_databases]]
+binding = "DB"
+database_name = "kitchen-deals-db"
+database_id = "REPLACE_WITH_DATABASE_ID"
+
+# The Node scraper service (root of this repo) scrapes deals/products and
+# POSTs them to /api/ingest. No in-worker cron scraping needed.

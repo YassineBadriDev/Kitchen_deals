@@ -1,0 +1,6 @@
+# Copy this file to .dev.vars for local development (gitignored).
+# The real values live in Cloudflare as secrets / vars.
+
+INGEST_TOKEN = "dev-token"
+AFFILIATE_LINKS = '{"amazon":"tag=kitchendeals-20","bestbuy":"affid=dev","walmart":"","target":"","homedepot":"","lowes":"","costco":""}'
+SITE_URL = "http://localhost:8787"

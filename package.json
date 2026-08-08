@@ -14,6 +14,8 @@
     "scrape:all": "node src/scraping/run.js --all",
     "scheduler": "node src/scraping/scheduler.js",
     "scheduler:once": "node src/scraping/scheduler.js --once",
+    "push:worker": "node scripts/push-to-worker.js",
+    "push:worker:prod": "node scripts/push-to-worker.js --url https://kitchendeals.org",
     "icons": "node scripts/icons.js",
     "sitemap": "node scripts/generate-sitemap.js",
     "build": "npm run icons && npm run sitemap",
