@@ -4,7 +4,7 @@ const fs = require('fs');
 const { saveDeals } = require('./normalize');
 const { addOrUpdateProduct } = require('./products');
 
-const CHROME_USER_DATA = path.join(process.env.LOCALAPPDATA, 'Google', 'Chrome', 'User Data');
+const CHROME_USER_DATA = path.join(process.env.LOCALAPPDATA || process.env.USERPROFILE || require('os').homedir(), 'Google', 'Chrome', 'User Data');
 
 const RETAILERS = {
   amazon: {
