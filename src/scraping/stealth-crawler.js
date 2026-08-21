@@ -137,6 +137,7 @@ async function scrapeWithStealth(source) {
 
 async function scrapeAttempt(source, attempt) {
   const browser = await chromium.launch({
+    executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
     headless: true,
     args: LAUNCH_ARGS,
     ignoreDefaultArgs: ['--enable-automation'],
