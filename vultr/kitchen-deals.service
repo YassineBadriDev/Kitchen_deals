@@ -1,0 +1,11 @@
+[Unit]
+Description=Kitchen Deals scrape -> Cloudflare D1 + git archive
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# Longer than the 40 min the GitHub workflow allowed: no rush on a VPS.
+TimeoutStartSec=5400
+WorkingDirectory=/opt/kitchen-deals
+ExecStart=/opt/kitchen-deals/vultr/run.sh
