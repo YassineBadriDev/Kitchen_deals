@@ -1,10 +1,6 @@
 name: Kitchen Deals Scraper
 
 on:
-  schedule:
-    # Once daily at 14:00 UTC = 10:00 AM ET — peak deal-posting time
-    # Amazon/Walmart/Best Buy all refresh daily deals by 8-9am ET
-    - cron: '0 14 * * *'
   workflow_dispatch:
 
 permissions:
