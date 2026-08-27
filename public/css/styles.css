@@ -129,6 +129,21 @@ h3{font-size:1.125rem;margin-bottom:.5rem}
 .product-detail__cta{display:inline-block;background:var(--olive);color:var(--white);padding:.75rem 1.5rem;border-radius:6px;font-weight:600;text-align:center;transition:background .2s}
 .product-detail__cta:hover{background:#2d4508;text-decoration:none;color:var(--white)}
 
+.deal-hero{background:var(--olive);color:var(--white);padding:clamp(2rem,6vw,3.5rem) var(--gutter)}
+.deal-hero__inner{max-width:var(--max-width);margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap}
+.deal-hero__lead{flex:1 1 55%;min-width:280px}
+.deal-hero__lead h1{margin:0 0 .75rem;font-size:clamp(1.4rem,3.5vw,2.2rem);color:var(--white)}
+.deal-hero__badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem}
+.deal-hero__badges .deal-card__retailer{background:rgba(255,255,255,.15);color:var(--yellow);border:1px solid rgba(255,255,255,.25);padding:.15rem .5rem;border-radius:4px;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+.deal-hero__action{flex:1 1 38%;min-width:260px;text-align:center}
+.deal-hero__price{display:flex;align-items:baseline;justify-content:center;gap:.75rem;margin-bottom:1rem}
+.deal-hero__price .product-detail__price{color:var(--white);font-size:clamp(2rem,5vw,2.75rem)}
+.deal-hero__price .deal-card__orig-price{color:rgba(255,255,255,.7)}
+.deal-hero__price .deal-card__discount{background:var(--yellow);color:var(--black);padding:.15rem .5rem;border-radius:4px;font-weight:800;font-size:1rem}
+.deal-hero__cta{display:inline-block;background:var(--yellow);color:var(--black);padding:.9rem 2.5rem;border-radius:8px;font-size:1.05rem;font-weight:800;text-transform:uppercase;letter-spacing:.03em;box-shadow:0 4px 14px rgba(0,0,0,.25);transition:transform .15s,background .2s}
+.deal-hero__cta:hover{background:#fff;transform:translateY(-2px);text-decoration:none;color:var(--black)}
+.deal-hero__valid{font-size:.8125rem;color:rgba(255,255,255,.8);margin-top:.75rem}
+
 .product-detail__history{background:var(--light-gray);border-radius:8px;padding:1.5rem}
 .product-detail__history h2{margin-top:0;font-size:1.25rem}
 .price-chart{width:100%;min-height:200px;margin:1rem 0}

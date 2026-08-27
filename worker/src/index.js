@@ -10,6 +10,12 @@ import * as render from './render.js';
 const hubMap = buildHubMap();
 const LEGAL_SLUGS = ['privacy-policy', 'terms-of-service', 'contact', 'disclaimer'];
 
+const retailerHubSlug = (name) => {
+  const key = String(name || '').toLowerCase();
+  const hub = CLUSTERS.retailers.find((r) => (r.name || '').toLowerCase() === key);
+  return hub ? hub.slug : null;
+};
+
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json; charset=utf-8' } });
 
@@ -46,8 +52,8 @@ export default {
     }
 
     if (pathname === '/sitemap.xml') {
-      const products = await db.getProductRows(env);
-      return text(render.sitemapXml(allHubs(), products), 200, 'application/xml; charset=utf-8');
+      const [products, deals] = await Promise.all([db.getProductRows(env), db.getDeals(env)]);
+      return text(render.sitemapXml(allHubs(), products, deals), 200, 'application/xml; charset=utf-8');
     }
 
     if (pathname === '/robots.txt') return text(render.robotsTxt());
@@ -88,6 +94,51 @@ export default {
         jsonLd: [],
       };
       return html(render.pageWatchlist({ seo, updatedAt }));
+    }
+
+    const dealMatch = pathname.match(/^\/deal\/([^/]+)$/);
+    if (dealMatch) {
+      const [deal, updatedAt] = await Promise.all([db.getDealBySlug(env, dealMatch[1]), db.getLastUpdated(env)]);
+      if (!deal) return html(render.pageNotFound({ updatedAt }), 404);
+      const relatedDeals = await db.getRelatedDeals(env, deal, 4);
+      const jsonLd = [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: deal.title,
+          image: deal.image || '',
+          description: `${deal.title} - ${deal.discountPct ? `save ${deal.discountPct}%` : 'deal'} on Kitchen Deals`,
+          brand: deal.brand ? { '@type': 'Brand', name: deal.brand } : undefined,
+          offers: deal.price
+            ? {
+                '@type': 'Offer',
+                priceCurrency: 'USD',
+                price: deal.price,
+                ...(deal.origPrice ? { highPrice: deal.origPrice } : {}),
+                availability: 'https://schema.org/InStock',
+                url: deal.url || `${SITE.url}/deal/${deal.slug}`,
+                seller: deal.retailer ? { '@type': 'Organization', name: deal.retailer } : undefined,
+                priceValidUntil: deal.validThrough || undefined,
+              }
+            : undefined,
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Kitchen Deals', item: SITE.url },
+            { '@type': 'ListItem', position: 2, name: deal.retailer || 'Deals', item: retailerHubSlug(deal.retailer) ? `${SITE.url}/${retailerHubSlug(deal.retailer)}` : `${SITE.url}/` },
+            { '@type': 'ListItem', position: 3, name: deal.title, item: `${SITE.url}/deal/${deal.slug}` },
+          ],
+        },
+      ];
+      const seo = {
+        title: `${deal.title} - ${deal.retailer || 'Deal'} | ${SITE.name}`,
+        description: `${deal.title} at ${deal.retailer || 'retailer'}${deal.price ? ` for $${deal.price}` : ''}${deal.discountPct ? ` (save ${deal.discountPct}%)` : ''}. Click to get the deal.`,
+        canonical: `${SITE.url}/deal/${deal.slug}`,
+        jsonLd,
+      };
+      return html(render.pageDeal({ deal, relatedDeals, seo, affiliateLinks, updatedAt }));
     }
 
     const productMatch = pathname.match(/^\/product\/([^/]+)$/);

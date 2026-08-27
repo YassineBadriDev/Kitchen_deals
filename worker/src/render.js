@@ -175,12 +175,16 @@ function placeholderFor(category) {
 function dealCard(deal, affiliateLinks) {
   if (!deal) return '';
   const placeholder = placeholderFor(deal.category);
-  const href = affiliateHref(affiliateLinks, deal.url, deal.retailer);
+  const retHref = affiliateHref(affiliateLinks, deal.url, deal.retailer);
+  const detailHref = deal.slug ? `/deal/${escapeHtml(deal.slug)}` : null;
+  const link = (inner, cls = '') => detailHref
+    ? `<a href="${detailHref}" class="${cls}">${inner}</a>`
+    : `<a href="${escapeHtml(retHref)}" target="_blank" rel="noopener noreferrer" class="${cls}">${inner}</a>`;
   return `<article class="deal-card">
-  <img class="deal-card__image" src="${escapeHtml(deal.image || placeholder)}" alt="${escapeHtml(deal.title)}" width="300" height="200" loading="lazy">
+  ${link(`<img class="deal-card__image" src="${escapeHtml(deal.image || placeholder)}" alt="${escapeHtml(deal.title)}" width="300" height="200" loading="lazy">`, 'deal-card__link')}
   <div class="deal-card__body">
     <h3 class="deal-card__title">
-      <a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(deal.title)}</a>
+      ${link(escapeHtml(deal.title))}
     </h3>
     ${deal.retailer ? `<span class="deal-card__retailer">${escapeHtml(deal.retailer)}</span>` : ''}
     <div class="deal-card__pricing">
@@ -399,6 +403,82 @@ function formatDateLabel(dateStr) {
   return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
 
+export function pageDeal({ deal, relatedDeals, seo, affiliateLinks, site = SITE, updatedAt = null }) {
+  const retUrl = affiliateHref(affiliateLinks, deal.url, deal.retailer);
+  const discount = deal.discountPct ? `${deal.discountPct}%` : deal.origPrice && deal.price && deal.origPrice > 0
+    ? `${Math.round((1 - deal.price / deal.origPrice) * 100)}%` : '';
+  const body = `
+  <section class="deal-hero">
+    <div class="deal-hero__inner">
+      <div class="deal-hero__lead">
+        <div class="deal-hero__badges">
+          ${deal.retailer ? `<span class="deal-card__retailer">${escapeHtml(deal.retailer)}</span>` : ''}
+          ${deal.brand ? `<span class="deal-card__retailer">${escapeHtml(deal.brand)}</span>` : ''}
+          ${deal.category ? `<span class="deal-card__retailer">${escapeHtml(deal.category)}</span>` : ''}
+        </div>
+        <h1>${escapeHtml(deal.title)}</h1>
+      </div>
+      <div class="deal-hero__action">
+        <div class="deal-hero__price">
+          ${deal.price ? `<span class="product-detail__price">$${deal.price}</span>` : ''}
+          ${deal.origPrice && deal.origPrice > deal.price ? `<span class="deal-card__orig-price"><del>$${deal.origPrice}</del></span>` : ''}
+          ${discount ? `<span class="deal-card__discount">-${escapeHtml(discount)}</span>` : ''}
+        </div>
+        <a href="${escapeHtml(retUrl)}" target="_blank" rel="noopener noreferrer nofollow" class="deal-hero__cta">
+          Get The Deal
+        </a>
+        ${deal.validThrough ? `<p class="deal-hero__valid">Valid through ${escapeHtml(formatDateLabel(deal.validThrough))}</p>` : ''}
+      </div>
+    </div>
+  </section>
+
+  <section class="product-detail">
+    <div class="product-detail__inner">
+      <div class="product-detail__main">
+        <img class="product-detail__image" src="${escapeHtml(deal.image || '/placeholder.svg')}" alt="${escapeHtml(deal.title)}" width="400" height="400">
+        <a href="${escapeHtml(retUrl)}" target="_blank" rel="noopener noreferrer nofollow" class="product-detail__cta">
+          Get The Deal at ${escapeHtml(deal.retailer || 'Retailer')}
+        </a>
+        ${deal.scrapedAt ? `<p class="deal-hero__valid">Deal captured ${escapeHtml(formatDateLabel(deal.scrapedAt))}</p>` : ''}
+      </div>
+      <div class="product-detail__history">
+        <h2>Deal Details</h2>
+        <div class="price-stats">
+          <div class="price-stat">
+            <span class="price-stat__label">Price</span>
+            <span class="price-stat__value">${deal.price ? `$${deal.price}` : 'N/A'}</span>
+          </div>
+          <div class="price-stat">
+            <span class="price-stat__label">Original</span>
+            <span class="price-stat__value">${deal.origPrice ? `$${deal.origPrice}` : 'N/A'}</span>
+          </div>
+          <div class="price-stat">
+            <span class="price-stat__label">Savings</span>
+            <span class="price-stat__value">${discount ? `${escapeHtml(discount)}` : 'N/A'}</span>
+          </div>
+          <div class="price-stat">
+            <span class="price-stat__label">Retailer</span>
+            <span class="price-stat__value">${escapeHtml(deal.retailer || 'N/A')}</span>
+          </div>
+        </div>
+        <p class="price-history-note">Scraped from ${escapeHtml(deal.retailer || 'retailer')}${deal.scrapedAt ? ` on ${escapeHtml(formatDateLabel(deal.scrapedAt))}` : ''}. Click "Get The Deal" to view the original product page.</p>
+      </div>
+    </div>
+  </section>
+
+  ${relatedDeals && relatedDeals.length > 0 ? `
+  <section class="related-section">
+    <div class="related-section__inner">
+      <h2>Similar Deals</h2>
+      <div class="deal-grid">
+        ${relatedDeals.map((d) => dealCard(d, affiliateLinks)).join('\n        ')}
+      </div>
+    </div>
+  </section>` : ''}
+`;
+  return layout({ title: seo.title, description: seo.description, canonical: seo.canonical, jsonLd: seo.jsonLd, body, site, updatedAt });
+}
+
 export function pageProduct({ product, relatedProducts, priceComparison, seo, affiliateLinks, site = SITE, updatedAt = null }) {
   const body = `
   <section class="hero hero--product">
@@ -425,7 +505,7 @@ export function pageProduct({ product, relatedProducts, priceComparison, seo, af
 
         ${product.url ? `
         <a href="${escapeHtml(affiliateHref(affiliateLinks, product.url, product.retailer))}" target="_blank" rel="noopener noreferrer" class="product-detail__cta">
-          View at ${escapeHtml(product.retailer || 'Retailer')}
+          Get The Deal at ${escapeHtml(product.retailer || 'Retailer')}
         </a>` : ''}
 
         <button class="product-detail__watchlist" id="watchlistBtn" data-product-id="${escapeHtml(product.id)}">
@@ -724,7 +804,7 @@ export function pageNotFound({ site = SITE, updatedAt = null } = {}) {
   });
 }
 
-export function sitemapXml(hubs, products, site = SITE) {
+export function sitemapXml(hubs, products, deals, site = SITE) {
   const url = (loc, freq, prio) => `  <url>\n    <loc>${escapeHtml(loc)}</loc>\n    <changefreq>${freq}</changefreq>\n    <priority>${prio}</priority>\n  </url>`;
   const entries = [`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${url(`${site.url}/`, 'daily', '1.0')}`];
   for (const hub of hubs) {
@@ -733,6 +813,11 @@ export function sitemapXml(hubs, products, site = SITE) {
   }
   if (Array.isArray(products)) {
     for (const p of products) entries.push(url(`${site.url}/product/${p.id}`, 'daily', '0.7'));
+  }
+  if (Array.isArray(deals)) {
+    for (const d of deals) {
+      if (d.slug) entries.push(url(`${site.url}/deal/${d.slug}`, 'daily', '0.6'));
+    }
   }
   for (const lp of LEGAL_PAGES) entries.push(url(`${site.url}/${lp.slug}`, 'monthly', '0.3'));
   entries.push('</urlset>');

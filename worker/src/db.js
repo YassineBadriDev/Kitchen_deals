@@ -26,6 +26,19 @@ function toProduct(row, history) {
   };
 }
 
+export function slugify(text, retailer = '') {
+  const base = String(text || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 90);
+  const ret = String(retailer || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return ret ? `${base}-${ret}` : base;
+}
+
 function toDeal(row) {
   return {
     id: row.id,
@@ -40,6 +53,7 @@ function toDeal(row) {
     category: row.category || '',
     validThrough: row.valid_through || '',
     scrapedAt: row.scraped_at || '',
+    slug: row.slug || '',
   };
 }
 
@@ -48,6 +62,34 @@ export async function getDeals(env, limit = 500) {
     `SELECT * FROM deals ORDER BY scraped_at DESC LIMIT ?`,
   )
     .bind(limit)
+    .all();
+  return results.map(toDeal);
+}
+
+export async function getDealBySlug(env, slug) {
+  const { results } = await env.DB.prepare(`SELECT * FROM deals WHERE slug = ? LIMIT 1`)
+    .bind(slug)
+    .all();
+  const row = results[0];
+  return row ? toDeal(row) : null;
+}
+
+export async function getDealById(env, id) {
+  const { results } = await env.DB.prepare(`SELECT * FROM deals WHERE id = ? LIMIT 1`)
+    .bind(id)
+    .all();
+  const row = results[0];
+  return row ? toDeal(row) : null;
+}
+
+export async function getRelatedDeals(env, deal, limit = 4) {
+  const { results } = await env.DB.prepare(
+    `SELECT * FROM deals
+     WHERE id != ? AND (retailer = ? OR category = ?)
+     ORDER BY scraped_at DESC
+     LIMIT ?`,
+  )
+    .bind(deal.id, deal.retailer, deal.category || '', limit)
     .all();
   return results.map(toDeal);
 }
@@ -161,15 +203,17 @@ export async function ingest(env, payload) {
   const deals = Array.isArray(payload.deals) ? payload.deals : [];
   for (let i = 0; i < deals.length; i += 100) {
     const chunk = deals.slice(i, i + 100);
-    const stmts = chunk.map((d) =>
-      env.DB.prepare(
-        `INSERT INTO deals (retailer, title, url, image, price, orig_price, discount_pct, brand, category, valid_through, scraped_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    const stmts = chunk.map((d) => {
+      const slug = d.slug || slugify(d.title, d.retailer);
+      return env.DB.prepare(
+        `INSERT INTO deals (retailer, title, url, image, price, orig_price, discount_pct, brand, category, valid_through, scraped_at, slug)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT (retailer, title) DO UPDATE SET
            url = excluded.url, image = excluded.image, price = excluded.price,
            orig_price = excluded.orig_price, discount_pct = excluded.discount_pct,
            brand = excluded.brand, category = excluded.category,
-           valid_through = excluded.valid_through, scraped_at = excluded.scraped_at`,
+           valid_through = excluded.valid_through, scraped_at = excluded.scraped_at,
+           slug = excluded.slug`,
       ).bind(
         d.retailer || '',
         d.title || '',
@@ -182,8 +226,9 @@ export async function ingest(env, payload) {
         d.category || null,
         d.validThrough || null,
         d.scrapedAt || now,
-      ),
-    );
+        slug,
+      );
+    });
     const results = await env.DB.batch(stmts);
     for (let j = 0; j < results.length; j++) {
       if (results[j].meta.changes > 1) dealsUpdated++;

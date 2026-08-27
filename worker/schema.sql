@@ -15,11 +15,14 @@ CREATE TABLE IF NOT EXISTS deals (
   category TEXT,
   valid_through TEXT,
   scraped_at TEXT,
-  UNIQUE (retailer, title)
+  slug TEXT,
+  UNIQUE (retailer, title),
+  UNIQUE (slug)
 );
 CREATE INDEX IF NOT EXISTS idx_deals_retailer ON deals(retailer);
 CREATE INDEX IF NOT EXISTS idx_deals_category ON deals(category);
 CREATE INDEX IF NOT EXISTS idx_deals_scraped ON deals(scraped_at DESC);
+CREATE INDEX IF NOT EXISTS idx_deals_slug ON deals(slug);
 
 CREATE TABLE IF NOT EXISTS products (
   id TEXT PRIMARY KEY,
