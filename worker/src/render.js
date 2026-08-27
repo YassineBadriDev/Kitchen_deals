@@ -444,24 +444,24 @@ export function pageDeal({ deal, relatedDeals, seo, affiliateLinks, site = SITE,
       <div class="product-detail__history">
         <h2>Deal Details</h2>
         <div class="price-stats">
-          <div class="price-stat">
+          ${deal.price ? `<div class="price-stat">
             <span class="price-stat__label">Price</span>
-            <span class="price-stat__value">${deal.price ? `$${deal.price}` : 'N/A'}</span>
-          </div>
-          <div class="price-stat">
+            <span class="price-stat__value">$${deal.price}</span>
+          </div>` : ''}
+          ${deal.origPrice ? `<div class="price-stat">
             <span class="price-stat__label">Original</span>
-            <span class="price-stat__value">${deal.origPrice ? `$${deal.origPrice}` : 'N/A'}</span>
-          </div>
-          <div class="price-stat">
+            <span class="price-stat__value">$${deal.origPrice}</span>
+          </div>` : ''}
+          ${discount ? `<div class="price-stat">
             <span class="price-stat__label">Savings</span>
-            <span class="price-stat__value">${discount ? `${escapeHtml(discount)}` : 'N/A'}</span>
-          </div>
-          <div class="price-stat">
+            <span class="price-stat__value">${escapeHtml(discount)}</span>
+          </div>` : ''}
+          ${deal.retailer ? `<div class="price-stat">
             <span class="price-stat__label">Retailer</span>
-            <span class="price-stat__value">${escapeHtml(deal.retailer || 'N/A')}</span>
-          </div>
+            <span class="price-stat__value">${escapeHtml(deal.retailer)}</span>
+          </div>` : ''}
         </div>
-        <p class="price-history-note">Scraped from ${escapeHtml(deal.retailer || 'retailer')}${deal.scrapedAt ? ` on ${escapeHtml(formatDateLabel(deal.scrapedAt))}` : ''}. Click "Get The Deal" to view the original product page.</p>
+        <p class="price-history-note">Product details sourced from ${escapeHtml(deal.retailer || 'retailer')}. Click "Get The Deal" to view the original product page.</p>
       </div>
     </div>
   </section>
