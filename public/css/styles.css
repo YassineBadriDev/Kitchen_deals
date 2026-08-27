@@ -143,6 +143,9 @@ h3{font-size:1.125rem;margin-bottom:.5rem}
 .deal-hero__cta{display:inline-block;background:var(--yellow);color:var(--black);padding:.9rem 2.5rem;border-radius:8px;font-size:1.05rem;font-weight:800;text-transform:uppercase;letter-spacing:.03em;box-shadow:0 4px 14px rgba(0,0,0,.25);transition:transform .15s,background .2s}
 .deal-hero__cta:hover{background:#fff;transform:translateY(-2px);text-decoration:none;color:var(--black)}
 .deal-hero__valid{font-size:.8125rem;color:rgba(255,255,255,.8);margin-top:.75rem}
+.deal-description{margin-top:1.5rem;border-top:1px solid #e5e5e5;padding-top:1.25rem}
+.deal-description h3{margin:0 0 .5rem;font-size:1.05rem;color:var(--olive);text-transform:uppercase;letter-spacing:.03em}
+.deal-description p{margin:0;line-height:1.6;color:#444}
 
 .product-detail__history{background:var(--light-gray);border-radius:8px;padding:1.5rem}
 .product-detail__history h2{margin-top:0;font-size:1.25rem}

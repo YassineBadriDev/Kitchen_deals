@@ -107,7 +107,7 @@ export default {
           '@type': 'Product',
           name: deal.title,
           image: deal.image || '',
-          description: `${deal.title} - ${deal.discountPct ? `save ${deal.discountPct}%` : 'deal'} on Kitchen Deals`,
+          description: deal.description || `${deal.title} - ${deal.discountPct ? `save ${deal.discountPct}%` : 'deal'} on Kitchen Deals`,
           brand: deal.brand ? { '@type': 'Brand', name: deal.brand } : undefined,
           offers: deal.price
             ? {
@@ -134,7 +134,7 @@ export default {
       ];
       const seo = {
         title: `${deal.title} - ${deal.retailer || 'Deal'} | ${SITE.name}`,
-        description: `${deal.title} at ${deal.retailer || 'retailer'}${deal.price ? ` for $${deal.price}` : ''}${deal.discountPct ? ` (save ${deal.discountPct}%)` : ''}. Click to get the deal.`,
+        description: deal.description || `${deal.title} at ${deal.retailer || 'retailer'}${deal.price ? ` for $${deal.price}` : ''}${deal.discountPct ? ` (save ${deal.discountPct}%)` : ''}. Click to get the deal.`,
         canonical: `${SITE.url}/deal/${deal.slug}`,
         jsonLd,
       };

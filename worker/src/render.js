@@ -461,6 +461,11 @@ export function pageDeal({ deal, relatedDeals, seo, affiliateLinks, site = SITE,
             <span class="price-stat__value">${escapeHtml(deal.retailer)}</span>
           </div>` : ''}
         </div>
+        ${deal.description ? `
+        <div class="deal-description">
+          <h3>Product Details</h3>
+          <p>${escapeHtml(deal.description)}</p>
+        </div>` : ''}
         <p class="price-history-note">Product details sourced from ${escapeHtml(deal.retailer || 'retailer')}. Click "Get The Deal" to view the original product page.</p>
       </div>
     </div>

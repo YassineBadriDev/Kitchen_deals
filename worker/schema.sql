@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS deals (
   discount_pct REAL,
   brand TEXT,
   category TEXT,
+  description TEXT,
   valid_through TEXT,
   scraped_at TEXT,
   slug TEXT,

@@ -6,6 +6,7 @@ const { runAll } = require('./crawler');
 const { runPlaywrightScraper } = require('./playwright-crawler');
 const { runStealthScraper } = require('./stealth-crawler');
 const { scrapeWithProfile, RETAILERS } = require('./chrome-profile');
+const { main: runEnrichment } = require('./enrich');
 
 const LOG_FILE = path.join(__dirname, '..', '..', 'logs', 'scraper.log');
 
@@ -78,6 +79,17 @@ async function runScheduledScrape() {
         }
         log(`  done in ${((Date.now() - start) / 1000).toFixed(1)}s`);
       }
+    }
+
+    try {
+      log('Phase 5: Deal enrichment (descriptions)...');
+      const start = Date.now();
+      // Browser phase for bot-protected retailers, unless SCRAPE_ENRICH_HTTP_ONLY=1.
+      const enrichArgs = process.env.SCRAPE_ENRICH_HTTP_ONLY === '1' ? ['--http-only'] : ['--browser'];
+      await runEnrichment(enrichArgs);
+      log(`  done in ${((Date.now() - start) / 1000).toFixed(1)}s`);
+    } catch (err) {
+      log(`  Enrichment error: ${err.message}`);
     }
 
     log('=== Scheduled scrape finished ===');

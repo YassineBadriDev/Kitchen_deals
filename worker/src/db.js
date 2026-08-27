@@ -51,6 +51,7 @@ function toDeal(row) {
     discountPct: row.discount_pct,
     brand: row.brand || '',
     category: row.category || '',
+    description: row.description || '',
     validThrough: row.valid_through || '',
     scrapedAt: row.scraped_at || '',
     slug: row.slug || '',
@@ -206,12 +207,13 @@ export async function ingest(env, payload) {
     const stmts = chunk.map((d) => {
       const slug = d.slug || slugify(d.title, d.retailer);
       return env.DB.prepare(
-        `INSERT INTO deals (retailer, title, url, image, price, orig_price, discount_pct, brand, category, valid_through, scraped_at, slug)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `INSERT INTO deals (retailer, title, url, image, price, orig_price, discount_pct, brand, category, description, valid_through, scraped_at, slug)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT (retailer, title) DO UPDATE SET
            url = excluded.url, image = excluded.image, price = excluded.price,
            orig_price = excluded.orig_price, discount_pct = excluded.discount_pct,
            brand = excluded.brand, category = excluded.category,
+           description = excluded.description,
            valid_through = excluded.valid_through, scraped_at = excluded.scraped_at,
            slug = excluded.slug`,
       ).bind(
@@ -224,6 +226,7 @@ export async function ingest(env, payload) {
         d.discountPct ?? null,
         d.brand || null,
         d.category || null,
+        d.description || null,
         d.validThrough || null,
         d.scrapedAt || now,
         slug,

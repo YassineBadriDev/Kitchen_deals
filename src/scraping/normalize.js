@@ -29,6 +29,7 @@ function normalizeDeal(raw) {
     brand,
     retailer,
     category,
+    description: raw.description || '',
     validThrough: raw.validThrough || null,
     scrapedAt: new Date().toISOString(),
   };
