@@ -43,7 +43,7 @@ function cleanText(value) {
 async function scrapeWithPlaywright(source) {
   const realUserAgent = devices['Desktop Chrome'] ? devices['Desktop Chrome'].userAgent : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36';
   const browser = await chromium.launch({
-      executablePath: resolveChromeExecutable(), headless: 'new' });
+      executablePath: resolveChromeExecutable(), headless: true });
   const context = await browser.newContext({
     userAgent: realUserAgent,
     viewport: { width: 1920, height: 1080 },

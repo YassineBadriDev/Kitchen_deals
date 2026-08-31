@@ -110,7 +110,7 @@ async function enrichWithBrowser(chromium, deal) {
   const retailer = deal.retailer || '';
   const browser = await chromium.launch({
     executablePath: resolveChromeExecutable(),
-    headless: 'new',
+    headless: true,
     args: LAUNCH_ARGS,
     ignoreDefaultArgs: ['--enable-automation'],
   });

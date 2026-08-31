@@ -175,7 +175,7 @@ async function scrapeAttempt(source, attempt) {
   const realUserAgent = await getRealUserAgent();
   const browser = await chromium.launch({
     executablePath: resolveChromeExecutable(),
-    headless: 'new',
+    headless: true,
     args: LAUNCH_ARGS,
     ignoreDefaultArgs: ['--enable-automation'],
   });
