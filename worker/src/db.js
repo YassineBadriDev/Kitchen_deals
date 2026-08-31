@@ -202,10 +202,16 @@ export async function ingest(env, payload) {
   let pricePoints = 0;
 
   const deals = Array.isArray(payload.deals) ? payload.deals : [];
+  const usedSlugs = new Set();
+  const slugRows = await env.DB.prepare('SELECT slug FROM deals WHERE slug IS NOT NULL').all();
+  for (const r of slugRows.results || []) usedSlugs.add(r.slug);
   for (let i = 0; i < deals.length; i += 100) {
     const chunk = deals.slice(i, i + 100);
     const stmts = chunk.map((d) => {
-      const slug = d.slug || slugify(d.title, d.retailer);
+      let slug = d.slug || slugify(d.title, d.retailer);
+      let n = 2;
+      while (usedSlugs.has(slug)) slug = `${slug}-${n++}`;
+      usedSlugs.add(slug);
       return env.DB.prepare(
         `INSERT INTO deals (retailer, title, url, image, price, orig_price, discount_pct, brand, category, description, valid_through, scraped_at, slug)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -214,8 +220,7 @@ export async function ingest(env, payload) {
            orig_price = excluded.orig_price, discount_pct = excluded.discount_pct,
            brand = excluded.brand, category = excluded.category,
            description = excluded.description,
-           valid_through = excluded.valid_through, scraped_at = excluded.scraped_at,
-           slug = excluded.slug`,
+           valid_through = excluded.valid_through, scraped_at = excluded.scraped_at`,
       ).bind(
         d.retailer || '',
         d.title || '',

@@ -83,12 +83,22 @@ async function main() {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
+      'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36',
+      'accept': 'application/json',
       authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(payload),
   });
 
-  const body = await resp.json();
+  const text = await resp.text();
+  let body;
+  try {
+    body = JSON.parse(text);
+  } catch (err) {
+    console.error(`Ingest non-JSON response (HTTP ${resp.status}), first 200 chars:`);
+    console.error(text.slice(0, 200));
+    process.exit(1);
+  }
   if (!resp.ok) {
     console.error(`Ingest failed (${resp.status}):`, body);
     process.exit(1);
