@@ -17,12 +17,13 @@ const path = require('path');
 const { load } = require('cheerio');
 const axios = require('axios');
 const { extractDescription, canonicalUrl, normalizeDescription, cleanText } = require('./description');
+const { resolveChromeExecutable } = require('./launch-browser');
 const { REFRESH_DESCRIPTIONS } = require('./enrich-config');
 
 const ROOT = path.join(__dirname, '..', '..');
 const DEALS_DIR = path.join(ROOT, 'src', 'data', 'deals');
 
-const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36';
 
 // Retailers whose detail pages are reliably fetchable over plain HTTP.
 const HTTP_SAFE_RETAILERS = ['Target', 'Costco', 'Bosch', 'KitchenAid', 'Whirlpool', 'Home Depot', "Lowe's"];
@@ -108,8 +109,8 @@ async function enrichWithBrowser(chromium, deal) {
   if (!deal.url || !/^https?:\/\//i.test(deal.url)) return;
   const retailer = deal.retailer || '';
   const browser = await chromium.launch({
-    executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
-    headless: true,
+    executablePath: resolveChromeExecutable(),
+    headless: 'new',
     args: LAUNCH_ARGS,
     ignoreDefaultArgs: ['--enable-automation'],
   });

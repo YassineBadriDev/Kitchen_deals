@@ -2,24 +2,19 @@ const { chromium } = require('playwright-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const { saveDeals } = require('./normalize');
 const { isJunkTitle, extractAmazon, extractBestBuy, extractWalmart, extractTarget } = require('./playwright-crawler');
+const { resolveChromeExecutable, LAUNCH_ARGS } = require('./launch-browser');
 
 chromium.use(StealthPlugin());
 
-const LAUNCH_ARGS = [
-  '--disable-blink-features=AutomationControlled',
-  '--disable-features=IsolateOrigins,site-per-process',
-  '--disable-site-isolation-trials',
-  '--no-sandbox',
-  '--disable-setuid-sandbox',
-  '--disable-dev-shm-usage',
-  '--disable-accelerated-2d-canvas',
-  '--disable-gpu',
-  '--no-first-run',
-  '--no-default-browser-check',
-  '--disable-infobars',
-  '--window-size=1920,1080',
-  '--lang=en-US',
-];
+async function getRealUserAgent() {
+  const { chromium: core } = require('playwright');
+  if (core.chromium) {
+    const { devices } = require('playwright');
+    const desktop = devices['Desktop Chrome'];
+    if (desktop && desktop.userAgent) return desktop.userAgent;
+  }
+  return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36';
+}
 
 const INIT_SCRIPT = () => {
   Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
@@ -39,7 +34,7 @@ const INIT_SCRIPT = () => {
 };
 
 function makeHeaders(source) {
-  const base = {};
+  const base = { 'accept-language': 'en-US,en;q=0.9' };
   if (source === 'bestbuy') base['x-country-code'] = 'US';
   return base;
 }
@@ -68,59 +63,100 @@ async function waitForCaptchaFallback(page) {
   return true;
 }
 
+async function findPxFrame(page) {
+  for (const frame of page.frames()) {
+    if (frame === page.mainFrame()) continue;
+    let url = '';
+    try { url = frame.url(); } catch (e) {}
+    if (/px-captcha|perimeterx|px\.challenges|challenges\.cloudflare|human/i.test(url)) return frame;
+  }
+  return null;
+}
+
 async function solveWalmartChallenge(page) {
-  console.log('[walmart-stealth] Detected human verification, attempting press-and-hold bypass...');
+  console.log('[walmart-stealth] Detected human verification, attempting PerimeterX bypass...');
   try {
-    await page.waitForSelector('#px-captcha iframe', { timeout: 10000 });
+    await page.waitForSelector('#px-captcha, .px-captcha-holder, form#px-captcha, [data-testid="px-captcha"]', { timeout: 10000 });
   } catch (err) {
-    console.log('[walmart-stealth] No PX iframe found');
+    console.log('[walmart-stealth] No PX widget in main frame');
   }
 
   let solved = false;
   for (let round = 0; round < 6 && !solved; round++) {
-    let pressed = false;
-    for (const frame of page.frames()) {
-      if (frame === page.mainFrame() || frame.url() !== 'about:blank') continue;
-      let hasHold = false;
-      try {
-        hasHold = await frame.evaluate(() => {
-          const btn = document.querySelector('[role="button"]');
-          return !!(btn && /press|hold|continue|tap/i.test((btn.textContent || '').toLowerCase()));
-        });
-      } catch (err) {}
-      if (!hasHold) continue;
+    let interacted = false;
+
+    const held = await findPressHoldButton(page, page.frames(), true);
+    if (held) {
       console.log(`[walmart-stealth] Press-and-hold button found, holding (round ${round + 1})...`);
-      const box = await frame.locator('[role="button"]').first().boundingBox();
-      if (box) {
-        const cx = box.x + box.width / 2;
-        const cy = box.y + box.height / 2;
-        await page.mouse.move(cx, cy, { steps: 15 });
-        await page.waitForTimeout(300 + Math.random() * 200);
-        await page.mouse.down();
-        const holdTime = 5000 + Math.random() * 2000;
-        const start = Date.now();
-        while (Date.now() - start < holdTime) {
-          await page.mouse.move(cx + (Math.random() - 0.5) * 6, cy + (Math.random() - 0.5) * 6);
-          await page.waitForTimeout(150 + Math.random() * 200);
-        }
-        await page.mouse.up();
-        pressed = true;
-        await page.waitForTimeout(6000);
-        const bodyAfter = await page.evaluate(() => document.body.innerText.slice(0, 120));
-        if (!/robot or human/i.test(bodyAfter)) {
-          solved = true;
-          console.log('[walmart-stealth] Challenge cleared!');
-        }
-      }
-      break;
+      interacted = true;
+      await page.waitForTimeout(6000);
     }
-    if (!pressed) {
-      console.log('[walmart-stealth] No press-and-hold button this round, waiting...');
+
+    const pxFrame = await findPxFrame(page);
+    if (pxFrame && !interacted) {
+      console.log(`[walmart-stealth] Interacting with PX frame (${pxFrame.url()})...`);
+      const heldInFrame = await findPressHoldButton(page, [pxFrame], false);
+      if (heldInFrame) {
+        console.log(`[walmart-stealth] Press-and-hold button found in PX frame (round ${round + 1})...`);
+        interacted = true;
+        await page.waitForTimeout(6000);
+      }
+    }
+
+    if (!interacted) {
+      console.log(`[walmart-stealth] No press-and-hold button this round, waiting...`);
       await page.waitForTimeout(4000);
+    }
+
+    const bodyAfter = await page.evaluate(() => document.body ? document.body.innerText.slice(0, 160) : '');
+    if (!/robot or human/i.test(bodyAfter) && !/are you human/i.test(bodyAfter)) {
+      solved = true;
+      console.log('[walmart-stealth] Challenge cleared!');
+      break;
+    } else if (interacted) {
+      console.log('[walmart-stealth] Challenge still present after interaction, retrying...');
     }
   }
   await page.waitForTimeout(3000);
   return solved;
+}
+
+async function findPressHoldButton(page, framesArray, includeMainFrame) {
+  const frames = framesArray || page.frames();
+  for (const frame of frames) {
+    if (page.mainFrame && frame === page.mainFrame() && !includeMainFrame) continue;
+    try {
+      const hasHold = await frame.evaluate(() => {
+        const btn = document.querySelector('[role="button"], #px-captcha button, .px-captcha button, [data-testid="px-captcha"] button, button');
+        return !!(btn && /press|hold|continue|tap|verify|start/i.test((btn.textContent || '').toLowerCase()));
+      });
+      if (!hasHold) continue;
+    } catch (err) {
+      continue;
+    }
+    const btn = frame.locator('[role="button"], #px-captcha button, .px-captcha button, [data-testid="px-captcha"] button, button').first();
+    try {
+      const box = await btn.boundingBox();
+      if (!box) continue;
+      const cx = box.x + box.width / 2;
+      const cy = box.y + box.height / 2;
+      const activePage = frame.page();
+      await activePage.mouse.move(cx, cy, { steps: 15 });
+      await activePage.waitForTimeout(300 + Math.random() * 200);
+      await activePage.mouse.down();
+      const holdTime = 5000 + Math.random() * 2000;
+      const start = Date.now();
+      while (Date.now() - start < holdTime) {
+        await activePage.mouse.move(cx + (Math.random() - 0.5) * 6, cy + (Math.random() - 0.5) * 6);
+        await activePage.waitForTimeout(150 + Math.random() * 200);
+      }
+      await activePage.mouse.up();
+      return true;
+    } catch (err) {
+      continue;
+    }
+  }
+  return false;
 }
 
 async function scrapeWithStealth(source) {
@@ -136,14 +172,15 @@ async function scrapeWithStealth(source) {
 }
 
 async function scrapeAttempt(source, attempt) {
+  const realUserAgent = await getRealUserAgent();
   const browser = await chromium.launch({
-    executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
-    headless: true,
+    executablePath: resolveChromeExecutable(),
+    headless: 'new',
     args: LAUNCH_ARGS,
     ignoreDefaultArgs: ['--enable-automation'],
   });
   const context = await browser.newContext({
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+    userAgent: realUserAgent,
     viewport: { width: 1920, height: 1080 },
     screen: { width: 1920, height: 1080 },
     locale: 'en-US',
@@ -163,7 +200,7 @@ async function scrapeAttempt(source, attempt) {
 
     console.log(`[${source.name}-stealth] Navigating to ${source.url}...`);
     await page.goto(source.url, { waitUntil: 'domcontentloaded', timeout: 45000 });
-    await page.waitForTimeout(4000);
+    await page.waitForTimeout(5000);
 
     if (source.name === 'walmart') {
       const bodyText = await page.evaluate(() => document.body ? document.body.innerText.slice(0, 200) : '');

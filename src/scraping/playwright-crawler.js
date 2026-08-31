@@ -1,5 +1,6 @@
-const { chromium } = require('playwright');
+const { chromium, devices } = require('playwright');
 const { saveDeals } = require('./normalize');
+const { resolveChromeExecutable } = require('./launch-browser');
 
 const JUNK_PATTERNS = [
   /check each product page/i,
@@ -40,12 +41,15 @@ function cleanText(value) {
 }
 
 async function scrapeWithPlaywright(source) {
+  const realUserAgent = devices['Desktop Chrome'] ? devices['Desktop Chrome'].userAgent : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36';
   const browser = await chromium.launch({
-      executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH, headless: true });
+      executablePath: resolveChromeExecutable(), headless: 'new' });
   const context = await browser.newContext({
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+    userAgent: realUserAgent,
     viewport: { width: 1920, height: 1080 },
+    screen: { width: 1920, height: 1080 },
     locale: 'en-US',
+    timezoneId: 'America/New_York',
   });
   const page = await context.newPage();
 
@@ -165,7 +169,7 @@ function extractWalmart() {
   for (const link of anchors) {
     let title = (link.getAttribute('aria-label') || link.getAttribute('title') || '').replace(/\s+/g, ' ').trim();
     if (!title || seen.has(title)) continue;
-    title = title.replace(/^Options\s*[-–—:]\s*/i, '').trim();
+    title = title.replace(/^Options\s*[-ÔÇôÔÇö:]\s*/i, '').trim();
     if (!title || isJunkTitle(title)) continue;
     const card = link.closest('[data-testid="item-stack"], [data-testid="product-card"], [data-testid="product-tile"], [data-testid="item-tile"], [class*="search-result"]') || link.parentElement;
     let price = null;
@@ -281,7 +285,7 @@ const pwSources = [
 ];
 
 async function runPlaywrightScraper() {
-  console.log('Kitchen Deals — Playwright Scraper\n');
+  console.log('Kitchen Deals ÔÇö Playwright Scraper\n');
   const results = {};
   for (const source of pwSources) {
     results[source.name] = await scrapeWithPlaywright(source);
