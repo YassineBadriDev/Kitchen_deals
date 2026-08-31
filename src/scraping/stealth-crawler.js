@@ -82,7 +82,7 @@ async function solveWalmartChallenge(page) {
   }
 
   let solved = false;
-  for (let round = 0; round < 6 && !solved; round++) {
+  for (let round = 0; round < 2 && !solved; round++) {
     let interacted = false;
 
     const held = await findPressHoldButton(page, page.frames(), true);
@@ -160,7 +160,7 @@ async function findPressHoldButton(page, framesArray, includeMainFrame) {
 }
 
 async function scrapeWithStealth(source) {
-  const maxAttempts = source.name === 'walmart' ? 6 : 3;
+  const maxAttempts = source.name === 'walmart' ? 1 : 3;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const result = await scrapeAttempt(source, attempt);
     if (result !== 'challenge') return result;
