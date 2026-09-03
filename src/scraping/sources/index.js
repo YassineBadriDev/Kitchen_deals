@@ -16,7 +16,7 @@ const sources = [
   {
     name: 'bestbuy',
     label: 'Best Buy',
-    url: 'https://www.bestbuy.com/site/promo/daily-deals',
+    url: 'https://www.bestbuy.com/site/all-electronics-on-sale/all-appliances-on-sale/pcmcat1637009144989.c?id=pcmcat1637009144989',
     parse: ($) => {
       const deals = [];
       $('.sku-item, .product-item, [class*="product-card"], [class*="DealCard"]').each((_, el) => {
@@ -41,7 +41,7 @@ const sources = [
   {
     name: 'amazon',
     label: 'Amazon',
-    url: 'https://www.amazon.com/deals?ref=nav_cs_gb',
+    url: 'https://www.amazon.com/b?node=120868611011',
     parse: ($) => {
       const deals = [];
       $('[class*="DealCard"], [class*="deal-card"], .a-section .a-link-normal').each((_, el) => {
@@ -68,7 +68,7 @@ const sources = [
   {
     name: 'walmart',
     label: 'Walmart',
-    url: 'https://www.walmart.com/shop/deals',
+    url: 'https://www.walmart.com/shop/deals/all-home/kitchen-appliances',
     parse: ($) => {
       const deals = [];
       $('[class*="product"], [data-testid], .search-result-griditem').each((_, el) => {
