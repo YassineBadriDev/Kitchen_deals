@@ -273,7 +273,7 @@ const sources = [
   {
     name: 'walmart',
     label: 'Walmart',
-    url: 'https://www.walmart.com/shop/deals',
+    url: 'https://www.walmart.com/shop/deals/all-home/kitchen-appliances',
     home: 'https://www.walmart.com/',
     extract: extractWalmart,
   },

@@ -264,7 +264,7 @@ const pwSources = [
   {
     name: 'walmart',
     label: 'Walmart',
-    url: 'https://www.walmart.com/shop/deals',
+    url: 'https://www.walmart.com/shop/deals/all-home/kitchen-appliances',
     selector: 'a[href*="/ip/"]',
     extract: extractWalmart,
   },
