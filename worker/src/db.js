@@ -26,6 +26,53 @@ function toProduct(row, history) {
   };
 }
 
+// Junk/navigation titles that scrapers sometimes capture (Walmart nav, sign-in,
+// recommender placeholders, etc.). These should never be shown as "deals".
+const JUNK_PATTERNS = [
+  /^reorder my items$/i,
+  /^sign in/i,
+  /^create (an? )?account/i,
+  /^departments$/i,
+  /^savings/i,
+  /^sponsored$/i,
+  /^check each product page/i,
+  /^price and other details/i,
+  /^buying options/i,
+  /^may vary based/i,
+  /^cookie/i,
+  /^privacy (notice|policy)/i,
+  /^terms (of|and) (use|service)/i,
+  /^advertise/i,
+  /^deals?$/i,
+  /^sale$/i,
+  /^best sellers?$/i,
+  /^top /i,
+  /^see all/i,
+  /^more (results|deals)?$/i,
+  /^shop all/i,
+  /^the $/i,
+  /^for $/i,
+  /^about $/i,
+  /^options$/i,
+  /^member only/i,
+  /^explore/i,
+];
+
+function isJunkDeal(deal) {
+  const raw = String(deal?.title || '').trim();
+  if (!raw) return true;
+  if (raw.length < 6) return true;
+  if (raw.length > 250) return true;
+  // Repeating placeholder titles like 'aaaaaaaa…'
+  if (/^(.)\1{3,}/.test(raw)) return true;
+  // Percentage-only strings that aren't attached to a product ("50% off")
+  if (/^\d{1,3}\s*%/.test(raw) && !/\$\d/.test(raw)) return true;
+  for (const p of JUNK_PATTERNS) {
+    if (p.test(raw)) return true;
+  }
+  return false;
+}
+
 export function slugify(text, retailer = '') {
   const base = String(text || '')
     .toLowerCase()
@@ -202,11 +249,12 @@ export async function ingest(env, payload) {
   let pricePoints = 0;
 
   const deals = Array.isArray(payload.deals) ? payload.deals : [];
+  const validDeals = deals.filter((d) => !isJunkDeal(d));
   const usedSlugs = new Set();
   const slugRows = await env.DB.prepare('SELECT slug FROM deals WHERE slug IS NOT NULL').all();
   for (const r of slugRows.results || []) usedSlugs.add(r.slug);
-  for (let i = 0; i < deals.length; i += 100) {
-    const chunk = deals.slice(i, i + 100);
+  for (let i = 0; i < validDeals.length; i += 100) {
+    const chunk = validDeals.slice(i, i + 100);
     const stmts = chunk.map((d) => {
       let slug = d.slug || slugify(d.title, d.retailer);
       let n = 2;
