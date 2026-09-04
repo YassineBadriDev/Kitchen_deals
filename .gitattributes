@@ -1,0 +1,9 @@
+* text=auto
+
+# Shell scripts and systemd units must stay LF (they run on the Linux VPS)
+*.sh text eol=lf
+deploy/vultr/kitchendeals.service text eol=lf
+deploy/vultr/kitchendeals.timer text eol=lf
+
+# Windows PowerShell helper stays LF-friendly too (used from bash-agnostic shells)
+scripts/*.ps1 text eol=lf

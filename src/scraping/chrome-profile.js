@@ -4,7 +4,12 @@ const fs = require('fs');
 const { saveDeals } = require('./normalize');
 const { addOrUpdateProduct } = require('./products');
 
-const CHROME_USER_DATA = path.join(process.env.LOCALAPPDATA || process.env.USERPROFILE || require('os').homedir(), 'Google', 'Chrome', 'User Data');
+// Allow an explicit server-side profile dir via env. On Linux (Vultr VPS) the
+// LOCALAPPDATA/User Data paths don't exist, so default to a repo-local profile.
+const CHROME_PROFILE_DIR = process.env.CHROME_PROFILE_DIR;
+const CHROME_USER_DATA = CHROME_PROFILE_DIR
+  ? path.resolve(CHROME_PROFILE_DIR)
+  : path.join(process.env.LOCALAPPDATA || process.env.USERPROFILE || require('os').homedir(), 'Google', 'Chrome', 'User Data');
 
 const RETAILERS = {
   amazon: {
@@ -39,6 +44,9 @@ async function scrapeWithProfile(retailerKey) {
 
   console.log(`[${retailerKey}-profile] Starting Chrome profile scraper for ${retailer.name}...`);
   console.log(`[${retailerKey}-profile] IMPORTANT: Close Chrome completely before running this.\n`);
+
+  // Ensure the persistent profile directory exists (important on servers).
+  if (!fs.existsSync(CHROME_USER_DATA)) fs.mkdirSync(CHROME_USER_DATA, { recursive: true });
 
   const context = await chromium.launchPersistentContext(CHROME_USER_DATA, {
     channel: 'chrome',

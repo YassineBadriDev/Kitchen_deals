@@ -28,8 +28,18 @@ function log(message) {
 
 function isChromeRunning() {
   try {
-    const out = execSync('tasklist /FI "IMAGENAME eq chrome.exe" /NH 2>NUL', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
-    return /chrome\.exe/i.test(out);
+    if (process.platform === 'win32') {
+      // Windows: pipe stderr to the OS null device (NUL) so no stray file is created.
+      const out = execSync('tasklist /FI "IMAGENAME eq chrome.exe" /NH', {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+        windowsHide: true,
+      });
+      return /chrome\.exe/i.test(out);
+    }
+    // Linux/macOS: look for a running chrome/chromium process via pgrep.
+    const out = execSync('pgrep -f "chrom(e|ium)" || true', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+    return out.trim().length > 0;
   } catch (err) {
     return false;
   }
