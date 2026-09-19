@@ -41,7 +41,7 @@ function head({ title, description, canonical, image, jsonLd = [], site = SITE, 
     gtag('js', new Date());
     gtag('config', 'G-S7BVCX3513');
   </script>
-  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/styles.css?v=2">
 </head>
 <body>
   ${header(updatedAt)}
