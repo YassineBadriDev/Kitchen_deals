@@ -1,8 +1,8 @@
 [Unit]
-Description=Kitchen Deals scrape twice daily (02:20 and 14:20 UTC)
+Description=Kitchen Deals daily scrape (00:30 UTC)
 
 [Timer]
-OnCalendar=*-*-* 02:20,14:20:00 UTC
+OnCalendar=*-*-* 00:30:00 UTC
 RandomizedDelaySec=180
 Persistent=true
 
