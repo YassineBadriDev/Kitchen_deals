@@ -52,8 +52,8 @@ export default {
     }
 
     if (pathname === '/sitemap.xml') {
-      const [products, deals] = await Promise.all([db.getProductRows(env), db.getDeals(env)]);
-      return text(render.sitemapXml(allHubs(), products, deals), 200, 'application/xml; charset=utf-8');
+      const [products, deals, updatedAt] = await Promise.all([db.getProductRows(env), db.getDeals(env), db.getLastUpdated(env)]);
+      return text(render.sitemapXml(allHubs(), products, deals, updatedAt), 200, 'application/xml; charset=utf-8');
     }
 
     if (pathname === '/robots.txt') return text(render.robotsTxt());

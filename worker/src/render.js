@@ -809,19 +809,20 @@ export function pageNotFound({ site = SITE, updatedAt = null } = {}) {
   });
 }
 
-export function sitemapXml(hubs, products, deals, site = SITE) {
-  const url = (loc, freq, prio) => `  <url>\n    <loc>${escapeHtml(loc)}</loc>\n    <changefreq>${freq}</changefreq>\n    <priority>${prio}</priority>\n  </url>`;
-  const entries = [`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${url(`${site.url}/`, 'daily', '1.0')}`];
+export function sitemapXml(hubs, products, deals, lastmod, site = SITE) {
+  const lm = lastmod ? `    <lastmod>${escapeHtml(lastmod)}</lastmod>\n` : '';
+  const url = (loc, freq, prio) => `  <url>\n    <loc>${escapeHtml(loc)}</loc>\n${lm}    <changefreq>${freq}</changefreq>\n    <priority>${prio}</priority>\n  </url>`;
+  const entries = [`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${url(`${site.url}/`, 'hourly', '1.0')}`];
   for (const hub of hubs) {
     const prio = hub.entityType === 'Pillar' ? '1.0' : hub.entityType === 'Seasonal' ? '0.9' : '0.8';
     entries.push(url(`${site.url}/${hub.slug}`, 'weekly', prio));
   }
   if (Array.isArray(products)) {
-    for (const p of products) entries.push(url(`${site.url}/product/${p.id}`, 'daily', '0.7'));
+    for (const p of products) entries.push(url(`${site.url}/product/${p.id}`, 'hourly', '0.7'));
   }
   if (Array.isArray(deals)) {
     for (const d of deals) {
-      if (d.slug) entries.push(url(`${site.url}/deal/${d.slug}`, 'daily', '0.6'));
+      if (d.slug) entries.push(url(`${site.url}/deal/${d.slug}`, 'hourly', '0.6'));
     }
   }
   for (const lp of LEGAL_PAGES) entries.push(url(`${site.url}/${lp.slug}`, 'monthly', '0.3'));
