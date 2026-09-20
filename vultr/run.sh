@@ -10,14 +10,6 @@ if [ -f vultr/.env ]; then set -a; source vultr/.env; set +a; fi
 
 git pull --ff-only origin HEAD || git pull --ff-only
 
-# Self-manage the systemd timer: sync the schedule file from the repo and
-# reload systemd so schedule changes apply automatically on the next run.
-if [ -f /etc/systemd/system/kitchen-deals.timer ]; then
-  cp vultr/kitchen-deals.timer /etc/systemd/system/kitchen-deals.timer
-  systemctl daemon-reload
-  systemctl restart kitchen-deals.timer 2>/dev/null || systemctl start kitchen-deals.timer
-fi
-
 if [ ! -d node_modules ]; then
   PUPPETEER_SKIP_DOWNLOAD=true PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm ci --no-audit --no-fund
 fi
