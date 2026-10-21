@@ -65,6 +65,9 @@ else
 fi
 
 # Final safety net: no browser process belonging to this repo should survive.
-pkill -f "user-data-dir=/tmp/playwright.*$(basename "$REPO_DIR")" 2>/dev/null
+# NOTE: the old net below could never match, because Playwright profile
+# dirs are random (/tmp/playwright_chromiumdev_profile-XXXXXX), not repo names.
+# Replaced by run-guarded.sh, which snapshots chrome PIDs before/after.
+# pkill -f "user-data-dir=/tmp/playwright.*$(basename "$REPO_DIR")" 2>/dev/null
 
 echo "=== $(date '+%Y-%m-%d %H:%M:%S') Finished ${LOG_NAME} ===" >> "$LOG"
