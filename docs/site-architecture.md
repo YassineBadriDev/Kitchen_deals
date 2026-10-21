@@ -67,6 +67,33 @@ Five entity types, ranked by classification priority:
 - JSON file store
 - `npm run scrape` refresh
 
+## Deployment Pipeline
+
+The live site is served from Cloudflare (Worker + D1). The scrape runs on the
+Vultr box and pushes straight to the Worker; GitHub Actions is the scheduler.
+
+```
+GitHub Actions (.github/workflows/trigger-vultr.yml, cron 30 0 * * *)
+  -> SSH (deploy key, VULTR_SSH_KEY / VULTR_HOST secrets)
+  -> /opt/kitchen-deals/vultr/trigger-scrape.sh   (flock-guarded, detached)
+  -> vultr/run.sh  (scrape -> archive -> git commit)
+  -> scripts/push-to-worker.js  -> POST /api/ingest  -> Cloudflare D1
+```
+
+- The workflow polls `logs/trigger-exit` and then re-checks `/api/stats` and
+  the sitemap `lastmod`, so a run only passes if the data actually landed.
+- `vultr/trigger-scrape.sh` exits 3 if a scrape is already running; the
+  workflow treats that as "wait for the running one" instead of failing.
+- `vultr/run-guarded.sh` and the `timeout`/`setsid` guards in
+  `vultr/auto-scrape.sh` cap each run and reap the browsers it leaves behind.
+  Without that, orphaned Chrome processes exhausted the 3.9GB box and the
+  scrape was OOM-killed.
+- The `kitchen-deals.timer` unit is installed but disabled: GitHub Actions is
+  the primary scheduler, and enabling both would make them race.
+  `vultr/kitchen-deals.timer` documents how to flip that if needed.
+- The old cron entries that ran the scrape directly on the Vultr box are
+  disabled; they pointed at a stale checkout and had no timeout.
+
 ## Legal Pages
 
 - `/privacy-policy`
