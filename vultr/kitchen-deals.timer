@@ -1,3 +1,12 @@
+# Fallback scheduler for the Vultr box.
+#
+# The primary scheduler is GitHub Actions (.github/workflows/trigger-vultr.yml),
+# which SSHes in and runs vultr/trigger-scrape.sh. This timer is disabled on
+# the live box so the two never race each other.
+#
+# To re-enable as the primary scheduler:
+#   cp vultr/kitchen-deals.timer /etc/systemd/system/
+#   systemctl daemon-reload && systemctl enable --now kitchen-deals.timer
 [Unit]
 Description=Kitchen Deals daily scrape (00:30 UTC)
 

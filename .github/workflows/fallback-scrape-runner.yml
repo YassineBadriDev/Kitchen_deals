@@ -1,5 +1,12 @@
-name: Kitchen Deals Scraper
+name: Fallback Scraper (GitHub runner)
 
+# Emergency fallback only.
+#
+# The normal pipeline is .github/workflows/trigger-vultr.yml, which triggers the
+# scrape on the Vultr box and lets the box push to Cloudflare. This workflow
+# instead scrapes on the GitHub runner and pushes from there, so it still works
+# if the Vultr box is unreachable. Manual trigger only, to avoid pushing the
+# same data twice a day.
 on:
   workflow_dispatch:
 

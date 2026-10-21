@@ -1,0 +1,98 @@
+name: Trigger Vultr Scrape
+
+# Pipeline: GitHub Actions schedules -> SSH to the Vultr box -> scrape there ->
+# Vultr pushes the fresh deals into the Cloudflare Worker (D1) -> site updates.
+#
+# The scraper runs on the VPS rather than on the GitHub runner because it needs
+# a stable IP and a warm Playwright browser install; the runner is only used
+# as the trigger and the status poller.
+on:
+  schedule:
+    # 00:30 UTC daily
+    - cron: '30 0 * * *'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why this run was triggered manually'
+        required: false
+        default: 'manual'
+
+concurrency:
+  group: kitchen-deals-vultr-scrape
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  trigger-vultr-scrape:
+    name: Trigger scrape on Vultr and verify Cloudflare ingest
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.VULTR_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ secrets.VULTR_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+          ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes "root@${{ secrets.VULTR_HOST }}" 'echo connected'
+
+      - name: Start scrape on Vultr
+        id: trigger
+        run: |
+          set +e
+          ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes "root@${{ secrets.VULTR_HOST }}" \
+            '/opt/kitchen-deals/vultr/trigger-scrape.sh'
+          code=$?
+          set -e
+          if [ "$code" -eq 3 ]; then
+            echo "A scrape is already running on the Vultr box; waiting for it instead."
+          elif [ "$code" -ne 0 ]; then
+            echo "Failed to start the scrape (exit $code)."
+            exit "$code"
+          fi
+
+      - name: Wait for scrape to complete
+        run: |
+          for i in $(seq 1 110); do
+            code=$(ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes "root@${{ secrets.VULTR_HOST }}" \
+              'cat /opt/kitchen-deals/logs/trigger-exit 2>/dev/null' || true)
+            if [ -n "$code" ]; then
+              echo "Scrape finished with exit code $code."
+              if [ "$code" -ne 0 ]; then
+                echo "::group::Scrape log (tail)"
+                ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes "root@${{ secrets.VULTR_HOST }}" \
+                  'tail -60 $(ls -t /opt/kitchen-deals/logs/trigger-*.log 2>/dev/null | head -1) 2>/dev/null' || true
+                echo "::endgroup::"
+                exit "$code"
+              fi
+              exit 0
+            fi
+            echo "  still running... ($((i * 30))s elapsed)"
+            sleep 30
+          done
+          echo "Scrape did not finish within the time budget."
+          exit 1
+
+      - name: Show scrape log
+        if: always()
+        run: |
+          echo "::group::Scrape log (tail)"
+          ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes "root@${{ secrets.VULTR_HOST }}" \
+            'tail -40 $(ls -t /opt/kitchen-deals/logs/trigger-*.log 2>/dev/null | head -1) 2>/dev/null' || true
+          echo "::endgroup::"
+
+      - name: Verify the site received the data
+        run: |
+          echo "Worker stats:"
+          curl -fsS --max-time 30 https://kitchendeals.org/api/stats
+          echo
+          echo "Sitemap lastmod:"
+          curl -fsS --max-time 30 https://kitchendeals.org/sitemap.xml \
+            | grep -oE '<lastmod>[^<]+</lastmod>' | head -1
+          echo
+          echo "Homepage status:"
+          curl -fsS -o /dev/null -w '  HTTP %{http_code} in %{time_total}s\n' --max-time 30 https://kitchendeals.org
