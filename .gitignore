@@ -9,5 +9,7 @@ public/site.webmanifest
 public/sitemap.xml
 .DS_Store
 *.log
+logs/
+vultr/.env
 
 NUL
